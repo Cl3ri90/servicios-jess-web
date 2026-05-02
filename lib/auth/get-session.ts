@@ -5,10 +5,12 @@ import { prisma } from '@/lib/prisma';
 import { Role } from '@prisma/client';
 
 export type AuthContext = {
-  authId: string;
-  userId: string;
-  role: Role;
+  id: string;
+  supabaseUserId: string;
   email: string;
+  name: string | null;
+  role: Role;
+  isActive: boolean;
 } | null;
 
 export async function getSession(): Promise<AuthContext> {
@@ -44,12 +46,19 @@ export async function getSession(): Promise<AuthContext> {
     return null;
   }
 
+  const authUser = session.user;
+
   const dbUser = await prisma.user.findUnique({
-    where: { authId: session.user.id },
+    where: {
+      supabaseUserId: authUser.id,
+    },
     select: {
       id: true,
-      role: true,
+      supabaseUserId: true,
       email: true,
+      name: true,
+      role: true,
+      isActive: true,
     },
   });
 
@@ -57,10 +66,16 @@ export async function getSession(): Promise<AuthContext> {
     return null;
   }
 
+  if (dbUser.isActive === false) {
+    return null;
+  }
+
   return {
-    authId: session.user.id,
-    userId: dbUser.id,
-    role: dbUser.role,
+    id: dbUser.id,
+    supabaseUserId: dbUser.supabaseUserId,
     email: dbUser.email,
+    name: dbUser.name,
+    role: dbUser.role,
+    isActive: dbUser.isActive,
   };
 }
