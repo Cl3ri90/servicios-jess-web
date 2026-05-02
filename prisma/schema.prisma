@@ -1,0 +1,291 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  OWNER
+  DEVELOPER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  authId    String   @unique
+  email     String   @unique
+  role      Role     @default(OWNER)
+  tenantId  String   @default("single")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([authId])
+}
+
+model SiteConfig {
+  id              String   @id @default("singleton")
+  tenantId        String   @default("single")
+  name            String
+  logoUrl         String?
+  faviconUrl      String?
+  primaryColor    String?
+  secondaryColor  String?
+  
+  metaTitle       String?
+  metaDescription String?
+  
+  heroTitle       String?
+  heroSubtitle    String?
+  heroBgUrl       String?
+
+  
+  contactEmail    String?
+  contactPhone    String?
+  contactAddress  String?
+
+  isMaintenance     Boolean  @default(false)
+  devSignature      String?
+  devSignatureUrl   String?
+
+  whatsappPhone     String?
+  mapEmbedUrl       String?
+  footerText        String?
+  legalTerms        String?
+  legalPrivacy      String?
+  
+  heroBtnText       String?
+  heroBtnLink       String?
+  heroSecBtnText    String?
+  heroSecBtnLink    String?
+
+  showHero          Boolean  @default(true)
+  showServices      Boolean  @default(true)
+  showClients       Boolean  @default(true)
+  showMetrics       Boolean  @default(true)
+  showIndustrialCTA Boolean  @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model FeatureFlag {
+  id            String   @id @default(uuid())
+  tenantId      String   @default("single")
+  key           String   @unique
+  name          String
+  description   String?
+  isActive      Boolean  @default(false)
+  ownerVisible  Boolean  @default(false)
+  ownerEditable Boolean  @default(false)
+  publicVisible Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([key])
+}
+
+model PageBlock {
+  id        String   @id @default(uuid())
+  tenantId  String   @default("single")
+  slug      String   @unique
+  title     String
+  content   String   @db.Text
+  imageUrl  String?
+  isActive  Boolean  @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model ServiceCapability {
+  id               String   @id @default(uuid())
+  tenantId         String   @default("single")
+  title            String
+  description      String   @db.Text
+  shortDescription String
+  imageUrl         String?
+  iconName         String?
+  order            Int      @default(0)
+  isActive         Boolean  @default(true)
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([order])
+}
+
+model Portfolio {
+  id            String   @id @default(cuid())
+  tenantId      String   @default("single")
+  title         String
+  slug          String   @unique
+  category      String?
+  clientName    String?
+  industry      String?
+  material      String?
+  specs         String?  @db.Text
+  gallery       String?  @db.Text
+  featuredImage String?
+  order         Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Lead {
+  id                 String    @id @default(cuid())
+  tenantId           String    @default("single")
+  name               String?
+  email              String
+  phone              String?
+  company            String?
+  message            String    @db.Text
+  status             String    @default("NEW")
+  source             String    @default("web")
+  emailStatus        String    @default("pending")
+  emailError         String?   @db.Text
+  lastEmailAttemptAt DateTime?
+  repliedAt          DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model CompanyInfo {
+  id          String   @id @default("singleton")
+  tenantId    String   @default("single")
+  title       String   @default("Nuestra Empresa")
+  description String   @db.Text
+  features    String   @default("[]") @db.Text
+  imageUrl    String?
+  ctaText     String?
+  ctaLink     String?
+  showOnHome  Boolean  @default(true)
+  history     String?  @db.Text
+  mission     String?  @db.Text
+  vision      String?  @db.Text
+  values      String?  @db.Text
+  updatedAt   DateTime @updatedAt
+}
+
+model SeoHistory {
+  id              String   @id @default(uuid())
+  userId          String
+  metaTitle       String?
+  metaDescription String?
+  changedAt       DateTime @default(now())
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  tenantId  String   @default("single")
+  name      String
+  logoUrl   String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Metric {
+  id          String   @id @default(cuid())
+  tenantId    String   @default("single")
+  value       String
+  label       String
+  description String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Popup {
+  id          String    @id @default("singleton")
+  tenantId    String    @default("single")
+  isActive    Boolean   @default(false)
+  title       String
+  text        String?   @db.Text
+  buttonText  String?
+  url         String?
+  imageUrl    String?
+  delay       Int?      @default(3000)
+  frequency   String?   @default("session")
+  pages       String?   @default("all")
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model WhatsAppConfig {
+  id             String   @id @default("singleton")
+  tenantId       String   @default("single")
+  phoneNumber    String?
+  defaultMessage String?
+  updatedAt      DateTime @updatedAt
+}
+
+model TechnicalDocument {
+  id          String   @id @default(cuid())
+  tenantId    String   @default("single")
+  title       String
+  description String?  @db.Text
+  category    String   @default("general")
+  fileUrl     String
+  isPublic    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+}
+
+model ConfigMaster {
+  id        String   @id @default(uuid())
+  tenantId  String   @default("single")
+  key       String
+  value     String   @db.Text
+  
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, key])
+}
+
+model FloatingCTA {
+  id              String   @id @default("floating-cta")
+  enabled         Boolean  @default(false)
+  label           String
+  href            String
+  position        String   @default("bottom-right")
+  iconName        String?
+  backgroundColor String   @default("#ea580c")
+  textColor       String   @default("#ffffff")
+  openInNewTab    Boolean  @default(false)
+  
+  tenantId        String   @default("single")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model TechnicalSheet {
+  id              String   @id @default(uuid())
+  tenantId        String   @default("single")
+  title           String
+  description     String?
+  category        String?
+  fileUrl         String
+  fileName        String?
+  fileType        String?
+  fileSize        Int?
+  coverImageUrl   String?
+  order           Int      @default(0)
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
