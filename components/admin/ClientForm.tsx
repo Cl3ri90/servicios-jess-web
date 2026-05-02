@@ -18,7 +18,7 @@ export function ClientForm({ tenantId }: { tenantId?: string }) {
         const res = await createClient(formData)
         if (res.error) setMessage({ type: 'error', text: res.error })
         if (res.success) {
-          setMessage({ type: 'success', text: res.success })
+          setMessage({ type: 'success', text: res.message! })
           const form = e.target as HTMLFormElement
           form.reset()
         }

@@ -16,7 +16,7 @@ export function GlobalSettingsForm({ initialData }: { initialData: SiteSettings 
       try {
         const res = await updateGlobalSettings(formData)
         if (res.error) setMessage({ type: 'error', text: res.error })
-        if (res.success) setMessage({ type: 'success', text: res.success })
+        if (res.success) setMessage({ type: 'success', text: typeof res.success === 'string' ? res.success : 'Actualización exitosa.' })
       } catch (err) {
         setMessage({ type: 'error', text: 'Error fatal de sistema.' })
       }

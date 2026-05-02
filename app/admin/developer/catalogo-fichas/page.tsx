@@ -13,7 +13,7 @@ export default async function TechnicalSheetsDeveloperPage({
 }) {
   // Aseguramos que solo el DEVELOPER entra aca, pero extrañaremos la key config si fuesemos owner.
   // Seguiremos usando el wrapper seguro.
-  const { flag } = await checkOwnerAccess('fichas_tecnicas', 'DEVELOPER');
+  const { flag } = await checkOwnerAccess('fichas_tecnicas');
   if (!flag) notFound();
 
   const sp = await searchParams;

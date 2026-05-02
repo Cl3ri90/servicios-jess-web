@@ -2,7 +2,7 @@ import { getCompanyInfo } from '@/lib/actions/company'
 import { CompanyForm } from '@/app/admin/owner/empresa/CompanyForm'
 
 export default async function EmpresaView({ tenantId }: { tenantId: string }) {
-  const companyInfo = await getCompanyInfo(tenantId)
+  const companyInfo = await getCompanyInfo()
 
   return (
     <div className="max-w-4xl mx-auto pb-20">

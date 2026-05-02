@@ -14,7 +14,7 @@ export default async function FloatingCTADeveloperPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
         <div>
-           <h1 className="text-2xl font-bold tracking-tight text-white mb-2">{flag.name}</h1>
+           <h1 className="text-2xl font-bold tracking-tight text-white mb-2">CTA Flotante</h1>
            <p className="text-sm text-zinc-400">Configura el botón adhesivo para marketing o contacto instantáneo (WhatsApp/Links).</p>
         </div>
       </div>

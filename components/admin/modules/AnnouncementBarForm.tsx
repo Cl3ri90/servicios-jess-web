@@ -43,7 +43,7 @@ export function AnnouncementBarForm({ tenantId, initialData, isDeveloperView }: 
 
       const res = await saveAnnouncementBar(formData)
       if (res.error) setError(res.error)
-      if (res.success) setMessage(res.success)
+      if (res.success) setMessage(typeof res.success === 'string' ? res.success : 'Actualización exitosa.')
     } catch (e) {
       setError('Error al conectar con el servidor.')
     } finally {

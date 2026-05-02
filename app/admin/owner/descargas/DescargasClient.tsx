@@ -47,7 +47,7 @@ export function DescargasClient({ initialDocs }: Props) {
     const res = await createDocument(formData)
     if (res.error) showStatus('error', res.error)
     else {
-      showStatus('success', res.success!)
+      showStatus('success', res.message!)
       setShowAddForm(false)
       window.location.reload()
     }
@@ -58,7 +58,7 @@ export function DescargasClient({ initialDocs }: Props) {
     const res = await deleteDocument(id)
     if (res.error) showStatus('error', res.error)
     else {
-      showStatus('success', res.success!)
+      showStatus('success', res.message!)
       setDocs(prev => prev.filter(d => d.id !== id))
     }
   }

@@ -15,7 +15,7 @@ const TechnicalSheetSchema = z.object({
   isActive: z.boolean().default(true),
   
   // Archivo y cover (si editamos, podrían no venir en el payload y leerse del existente)
-  fileUrl: z.string().url('URL de archivo inválida').optional().or(z.literal('')),
+  fileUrl: z.string().url('URL de archivo inválida'),
   fileName: z.string().optional().or(z.literal('')),
   fileType: z.string().optional().or(z.literal('')),
   fileSize: z.coerce.number().optional(),
@@ -60,7 +60,7 @@ export async function upsertTechnicalSheet(prevState: any, formData: FormData): 
     }
 
     uploadData = {
-      fileUrl: uploadRes.publicUrl,
+      fileUrl: uploadRes.publicUrl || '',
       fileName: file.name,
       fileType: file.type,
       fileSize: file.size,

@@ -32,7 +32,7 @@ function SubmitButton() {
 }
 
 export function DeveloperConfigForm({ initialData }: DeveloperConfigFormProps) {
-  const [state, formAction] = useActionState(updateDeveloperConfig, { success: false });
+  const [state, formAction] = useActionState(updateDeveloperConfig, { success: false, message: '' });
 
   useEffect(() => {
     if (state.message) toast.success(state.message, { className: 'font-mono text-xs' });

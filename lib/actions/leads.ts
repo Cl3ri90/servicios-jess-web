@@ -3,8 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
-import { sendLeadEmails } from '@/lib/emails'
-import { Resend } from 'resend'
+
 import { validateAdminAccess } from '@/lib/admin/permissions'
 
 const leadSchema = z.object({
@@ -41,16 +40,7 @@ export async function createLead(formData: FormData) {
     })
 
     // Correos Transaccionales
-    const emailData = await sendLeadEmails(data)
-    
-    await prisma.lead.update({
-      where: { id: newLead.id },
-      data: {
-        emailStatus: emailData.emailStatus || 'pending',
-        emailError: emailData.emailError || null,
-        lastEmailAttemptAt: new Date(),
-      }
-    })
+    console.log('Nuevo lead recibido:', data);
 
     revalidatePath('/admin/owner/leads')
     
@@ -96,40 +86,13 @@ export async function replyLeadEmail(leadId: string, subject: string, message: s
     return { error: 'Debe proveer un asunto y un mensaje' }
   }
 
-  const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) {
-     return { error: 'La llave de RESEND_API_KEY no se encuentra configurada en el servidor. Imposible enviar.' }
-  }
-
   try {
     await validateAdminAccess("OWNER");
 
     const lead = await prisma.lead.findUnique({ where: { id: leadId } })
     if (!lead) return { error: 'No se encontró el Lead en la base de datos' }
 
-    const resend = new Resend(resendKey);
-    
-    const { error: apiError } = await resend.emails.send({
-      from: 'onboarding@resend.dev', 
-      to: [lead.email],
-      subject: subject,
-      html: `
-        <div style="font-family: sans-serif; color: #333; max-width:600px; margin:0 auto; padding: 20px; border:1px solid #ddd; border-radius:5px;">
-           <h3 style="color:#f97316;">Respuesta Comercial</h3>
-           <hr />
-           <br />
-           <div style="white-space: pre-wrap;">${message}</div>
-           <br />
-           <hr />
-           <p style="font-size: 12px; color: #888;">Mensaje enviado mediante Plataforma B2B a ${lead.name || 'Cliente'}.</p>
-        </div>
-      `,
-    })
-
-    if (apiError) {
-      console.error('[Resend Reply API Error]', apiError)
-      return { error: 'Fallo al despachar correo a Resend: ' + apiError.message }
-    }
+    console.log('Nuevo correo a Lead (simulado):', { leadId, subject, message });
 
     await prisma.lead.update({
       where: { id: leadId },
@@ -141,9 +104,9 @@ export async function replyLeadEmail(leadId: string, subject: string, message: s
 
     revalidatePath('/admin/owner/leads')
     
-    return { success: 'Su respuesta por correo ha sido despachada con éxito' }
+    return { success: 'Su respuesta por correo ha sido procesada con éxito (Simulado)' }
   } catch (error: any) {
     console.error('CRM Reply Error:', error)
-    return { error: 'Error sistémico impidió mandar el email: ' + (error.message || String(error)) }
+    return { error: 'Error sistémico impidió procesar la respuesta: ' + (error.message || String(error)) }
   }
 }

@@ -25,7 +25,7 @@ export function PortfolioForm({ initialData, tenantId }: { initialData?: any, te
           
         if (res.error) setMessage({ type: 'error', text: res.error })
         if (res.success) {
-          setMessage({ type: 'success', text: res.success })
+          setMessage({ type: 'success', text: res.message! })
           if (!initialData) {
              const form = e.target as HTMLFormElement
              form.reset()

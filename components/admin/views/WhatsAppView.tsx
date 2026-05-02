@@ -2,7 +2,7 @@ import { getWhatsAppConfig } from '@/lib/actions/whatsapp'
 import { WhatsAppForm } from '@/components/admin/WhatsAppForm'
 
 export default async function WhatsAppView({ tenantId }: { tenantId: string }) {
-  const config = await getWhatsAppConfig(tenantId)
+  const config = await getWhatsAppConfig()
 
   return (
     <div className="max-w-4xl mx-auto pb-20">

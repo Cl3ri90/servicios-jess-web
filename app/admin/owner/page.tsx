@@ -16,7 +16,7 @@ export default async function OwnerDashboard() {
       <header className="border-b border-zinc-800 pb-6 mb-8">
         <h1 className="text-3xl font-black tracking-tight text-white uppercase text-[#ea580c]">Panel de Control Operativo</h1>
         <p className="text-zinc-400 mt-2 font-medium">
-          Bienvenido {profile?.name || profile?.email || 'Operador'}. Control de características y despliegues del sistema.
+          Bienvenido {profile?.email || 'Operador'}. Control de características y despliegues del sistema.
         </p>
       </header>
 

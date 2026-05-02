@@ -7,7 +7,7 @@ type ServiceProps = {
   shortDescription: string;
   description: string;
   imageUrl: string | null;
-  icon: string | null;
+  iconName: string | null;
 };
 
 export function ServicesSection({ services }: { services: ServiceProps[] }) {

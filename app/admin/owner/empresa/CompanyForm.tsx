@@ -18,7 +18,7 @@ export function CompanyForm({ initialData, tenantId }: { initialData: any, tenan
     startTransition(async () => {
       const result = await upsertCompanyInfo(formData)
       if (result.error) setStatus({ error: result.error })
-      else setStatus({ success: result.success })
+      else setStatus({ success: result.message! })
     })
   }
 

@@ -126,7 +126,7 @@ function ConfigFormContent({
 
       if (res.error) setError(res.error)
       if (res.success) {
-        setMessage(res.success)
+        setMessage(typeof res.success === 'string' ? res.success : 'Configuración guardada exitosamente.')
         reset(data)
       }
     } catch (e: any) {
