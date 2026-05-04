@@ -23,7 +23,7 @@ export default async function OwnerDescargasPage() {
       </div>
 
       <div className="mb-6 bg-neutral-900/50 border border-neutral-800 rounded-lg p-4 text-sm text-neutral-400 flex gap-3">
-        <span className="text-blue-400 shrink-0">ℹ️</span>
+        <span className="text-[#ea580c] shrink-0">ℹ️</span>
         <div>
           <p className="font-medium text-neutral-200 mb-1">Cómo subir archivos</p>
           <p>Sube el PDF o documento a <strong className="text-white">Supabase Storage</strong> (bucket público) y copia la URL que genera. Pega esa URL en el campo "URL del archivo" al crear el documento.</p>

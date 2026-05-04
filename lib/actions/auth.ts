@@ -3,6 +3,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
 
 export async function loginAction(formData: FormData) {
   const email = formData.get('email') as string;
@@ -35,16 +36,35 @@ export async function loginAction(formData: FormData) {
     }
   );
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
-  if (error) {
-    return { error: error.message || 'Credenciales inválidas.' };
+  if (error || !data.user) {
+    return { error: error?.message || 'Credenciales inválidas.' };
   }
 
-  redirect('/admin/owner');
+  const dbUser = await prisma.user.findUnique({
+    where: { supabaseUserId: data.user.id }
+  });
+
+  if (!dbUser) {
+    return { error: 'Usuario no encontrado en la base de datos.' };
+  }
+
+  if (!dbUser.isActive) {
+    return { error: 'Tu cuenta está inactiva.' };
+  }
+
+  if (dbUser.role === 'DEVELOPER') {
+    redirect('/admin/developer');
+  } else if (dbUser.role === 'OWNER') {
+    redirect('/admin/owner');
+  } else {
+    // Default fallback
+    redirect('/admin/owner');
+  }
 }
 
 export async function logoutAction() {

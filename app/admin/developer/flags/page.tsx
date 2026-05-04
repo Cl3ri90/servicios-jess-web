@@ -74,7 +74,7 @@ export default async function DeveloperFlagsPage() {
             <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mt-1">Motores Activos</p>
          </div>
          <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex flex-col items-center justify-center text-center">
-            <p className="text-3xl font-black text-blue-500 font-mono">{ownerVisibleCount}</p>
+            <p className="text-3xl font-black text-[#ea580c] font-mono">{ownerVisibleCount}</p>
             <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mt-1">Visible CMS Owner</p>
          </div>
          <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 flex flex-col items-center justify-center text-center">

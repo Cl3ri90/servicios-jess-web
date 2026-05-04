@@ -47,7 +47,7 @@ export function LeadActions({ leadId, leadEmail }: { leadId: string, leadEmail: 
       <div className="flex flex-col gap-2">
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border border-blue-500/30 px-3 py-1.5 rounded transition-colors text-xs font-bold w-full uppercase tracking-wider"
+          className="bg-[#ea580c]/20 text-[#ea580c] hover:bg-orange-600 hover:text-white border border-[#ea580c]/30 px-3 py-1.5 rounded transition-colors text-xs font-bold w-full uppercase tracking-wider"
         >
           Responder
         </button>
@@ -79,17 +79,17 @@ export function LeadActions({ leadId, leadEmail }: { leadId: string, leadEmail: 
               
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1">Asunto</label>
-                <input required name="subject" defaultValue="RE: Solicitud Técnica en Servicios Jess" className="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-white outline-none focus:border-blue-500" />
+                <input required name="subject" defaultValue="RE: Solicitud Técnica en Servicios Jess" className="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-white outline-none focus:border-[#ea580c]" />
               </div>
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1">Cuerpo del Mensaje</label>
-                <textarea required name="message" rows={6} className="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-white outline-none focus:border-blue-500 resize-none" placeholder="Escribe tu respuesta aquí..."></textarea>
+                <textarea required name="message" rows={6} className="w-full bg-neutral-950 border border-neutral-700 rounded px-3 py-2 text-white outline-none focus:border-[#ea580c] resize-none" placeholder="Escribe tu respuesta aquí..."></textarea>
               </div>
 
               <div className="pt-2 flex gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} disabled={isReplying} className="flex-1 bg-neutral-800 hover:bg-neutral-700 text-white font-bold py-2 px-4 rounded transition-colors disabled:opacity-50 text-sm uppercase">Cancelar</button>
-                <button type="submit" disabled={isReplying} className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold py-2 px-4 rounded transition-colors text-sm uppercase flex items-center justify-center">
+                <button type="submit" disabled={isReplying} className="flex-1 bg-[#ea580c] hover:bg-orange-600 disabled:opacity-50 text-white font-bold py-2 px-4 rounded transition-colors text-sm uppercase flex items-center justify-center">
                   {isReplying ? 'Enviando email...' : 'Enviar Respuesta'}
                 </button>
               </div>

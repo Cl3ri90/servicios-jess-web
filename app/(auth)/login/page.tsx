@@ -31,8 +31,20 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-sm bg-neutral-900 border border-neutral-800 p-8 rounded-sm shadow-2xl relative z-10 glass">
-        <div className="flex justify-center mb-6 opacity-30 object-contain grayscale">
-           <div className="w-12 h-10 bg-neutral-800 rounded-sm flex items-center justify-center transform -skew-x-12 border border-white/20">
+        <div className="flex justify-center mb-6">
+           <img 
+              src="/logo.png" 
+              alt="Servicios Jess" 
+              className="h-12 w-auto object-contain"
+              onError={(e) => {
+                 e.currentTarget.style.display = 'none';
+                 const nextSibling = e.currentTarget.nextElementSibling;
+                 if (nextSibling) {
+                   nextSibling.classList.remove('hidden');
+                 }
+              }}
+           />
+           <div className="hidden w-12 h-10 bg-neutral-800 rounded-sm flex items-center justify-center transform -skew-x-12 border border-white/20">
               <span className="skew-x-12 text-lg font-black text-white italic tracking-tighter">SJ</span>
            </div>
         </div>

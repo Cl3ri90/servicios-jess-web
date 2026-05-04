@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-primary: #1E3A8A; 
-  --color-primary-dark: #1E40AF;
+  --color-primary: #EA580C; 
+  --color-primary-dark: #C2410C;
   --color-accent: #EA580C; 
   --color-accent-hover: #C2410C;
   --color-dark: #0F172A;

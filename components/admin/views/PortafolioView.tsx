@@ -55,7 +55,7 @@ export default async function PortafolioView({
                    <td className="px-6 py-4 text-xs font-mono">{p.clientName || '-'}</td>
                    <td className="px-6 py-4 uppercase tracking-widest text-xs text-[#ea580c]">{p.category || '-'}</td>
                    <td className="px-6 py-4 text-right flex items-center justify-end gap-4">
-                      <Link href={`${baseUrl}?editId=${p.id}`} className="text-blue-500 text-sm font-medium hover:underline">
+                      <Link href={`${baseUrl}?editId=${p.id}`} className="text-[#ea580c] text-sm font-medium hover:underline">
                         Editar
                       </Link>
                       <DeletePortfolioButton id={p.id} />

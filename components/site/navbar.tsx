@@ -13,6 +13,7 @@ type NavbarProps = {
 export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -88,13 +89,52 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
             </Link>
           </div>
 
-          <button className="lg:hidden text-[var(--color-gray-soft)] hover:text-white">
+          <button 
+            onClick={() => setIsOpen((prev) => !prev)}
+            className="lg:hidden text-[var(--color-gray-soft)] hover:text-white"
+          >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              {isOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
             </svg>
           </button>
         </div>
       </header>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 bg-zinc-950/95 backdrop-blur-md pt-24 px-6 pb-6 overflow-y-auto lg:hidden">
+          <div className="flex flex-col gap-6">
+            {navItems.map((item) => {
+              const isActive = pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  onClick={() => setIsOpen(false)}
+                  className={`text-xl font-bold tracking-[0.2em] transition-colors uppercase py-2 border-b border-white/10 ${
+                    isActive 
+                      ? 'text-[#ea580c]' 
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
+            <Link 
+              href="/contacto" 
+              onClick={() => setIsOpen(false)}
+              className="mt-4 h-12 w-full bg-[#ea580c] text-white font-black text-sm uppercase tracking-[0.22em] hover:bg-orange-600 transition-colors rounded-sm flex items-center justify-center shadow-lg"
+            >
+              INICIAR PROYECTO
+            </Link>
+          </div>
+        </div>
+      )}
     </>
   );
 }

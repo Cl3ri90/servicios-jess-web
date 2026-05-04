@@ -32,7 +32,7 @@ export default async function LeadsView({ tenantId }: { tenantId: string }) {
                      <div className="font-mono">{new Date(lead.createdAt).toLocaleDateString()}</div>
                      <div className="mt-2 flex flex-col gap-1">
                        {lead.status === 'NEW' && <span className="bg-orange-600 text-white px-2 py-0.5 rounded-full text-[9px] uppercase tracking-widest inline-block text-center shadow-lg">Nuevo Solicitante</span>}
-                       {lead.status === 'RESPONDED' && <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full text-[9px] uppercase tracking-widest inline-block text-center shadow-lg">Respondido</span>}
+                       {lead.status === 'RESPONDED' && <span className="bg-[#ea580c] text-white px-2 py-0.5 rounded-full text-[9px] uppercase tracking-widest inline-block text-center shadow-lg">Respondido</span>}
                        {lead.emailStatus === 'failed' && <span title={lead.emailError || 'API Limit'} className="bg-red-950 text-red-500 border border-red-500/50 px-2 py-0.5 rounded-full text-[9px] uppercase tracking-widest inline-block text-center shadow-lg cursor-help">Fail: Resend Test</span>}
                      </div>
                    </td>
@@ -40,7 +40,7 @@ export default async function LeadsView({ tenantId }: { tenantId: string }) {
                       <div className="font-bold text-white flex items-center gap-2">
                         {lead.company || 'Particular'}
                         {lead.source === 'quote-modal' ? (
-                          <span className="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-1.5 py-0.5 rounded text-[10px] uppercase font-mono tracking-widest whitespace-nowrap">Modal</span>
+                          <span className="bg-[#ea580c]/20 text-[#ea580c] border border-[#ea580c]/30 px-1.5 py-0.5 rounded text-[10px] uppercase font-mono tracking-widest whitespace-nowrap">Modal</span>
                         ) : (
                           <span className="bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded text-[10px] uppercase font-mono tracking-widest whitespace-nowrap">Web</span>
                         )}

@@ -85,7 +85,7 @@ export default async function DeveloperDashboard() {
       {/* MÉTRICAS PRINCIPALES */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
          <MetricCard title="Capacidades" value={capTotal} sub={`${capActive} Activas • Pub`} icon={Icons.Hammer} color="text-orange-500" />
-         <MetricCard title="Portafolio" value={portTotal} sub={`${portActive} Proyectos Vivos`} icon={Icons.FolderOpen} color="text-blue-500" />
+         <MetricCard title="Portafolio" value={portTotal} sub={`${portActive} Proyectos Vivos`} icon={Icons.FolderOpen} color="text-[#ea580c]" />
          <MetricCard title="Fichas Técnicas" value={sheetTotal} sub={`${sheetActive} Indexadas para Pub`} icon={Icons.FileText} color="text-purple-500" />
          <MetricCard title="Leads Captados" value={leadTotal} sub="Total Histórico" icon={Icons.Users} color="text-green-500" />
       </section>
@@ -171,7 +171,7 @@ export default async function DeveloperDashboard() {
             <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
                <div className="bg-zinc-900 border-b border-zinc-800 p-4 flex justify-between items-center">
                   <h3 className="font-bold text-white uppercase tracking-widest text-xs flex items-center gap-2">
-                     <Icons.Activity className="w-4 h-4 text-blue-500" />
+                     <Icons.Activity className="w-4 h-4 text-[#ea580c]" />
                      Actividad System Flags
                   </h3>
                </div>

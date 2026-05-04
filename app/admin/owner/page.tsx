@@ -58,7 +58,7 @@ export default async function OwnerDashboard() {
                    {isDeveloper ? (
                      <FeatureFlagSwitch flagKey={flag.key} field="publicVisible" initialValue={flag.publicVisible} />
                    ) : (
-                     <span className={`px-2 py-1 rounded-sm text-[10px] uppercase tracking-widest font-bold ${flag.publicVisible ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                     <span className={`px-2 py-1 rounded-sm text-[10px] uppercase tracking-widest font-bold ${flag.publicVisible ? 'bg-[#ea580c]/20 text-[#ea580c] border border-[#ea580c]/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
                        {flag.publicVisible ? 'Público' : 'Oculto'}
                      </span>
                    )}

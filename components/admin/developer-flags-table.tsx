@@ -105,7 +105,7 @@ export function DeveloperFlagsTable({ initialFlags }: { initialFlags: Flag[] }) 
                                checked={flag.ownerVisible} 
                                disabled={isDisabled}
                                onCheckedChange={() => handleToggle(flag.key, 'ownerVisible', flag.ownerVisible)} 
-                               className="data-[state=checked]:bg-blue-500"
+                               className="data-[state=checked]:bg-[#ea580c]"
                              />
                           </div>
                           
