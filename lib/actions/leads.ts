@@ -27,7 +27,7 @@ export async function createLead(formData: FormData) {
     }
 
     const { success, data } = leadSchema.safeParse(rawData)
-    
+
     if (!success) {
       return { success: false, error: 'Datos de formulario inválidos. Por favor revisa los campos requeridos.' }
     }
@@ -43,7 +43,7 @@ export async function createLead(formData: FormData) {
     console.log('Nuevo lead recibido:', data);
 
     revalidatePath('/admin/owner/leads')
-    
+
     return { success: true, message: 'Su mensaje ha sido enviado exitosamente. Un comercial lo contactará.' }
   } catch (error) {
     console.error('Lead Error:', error)
@@ -103,7 +103,7 @@ export async function replyLeadEmail(leadId: string, subject: string, message: s
     })
 
     revalidatePath('/admin/owner/leads')
-    
+
     return { success: 'Su respuesta por correo ha sido procesada con éxito (Simulado)' }
   } catch (error: any) {
     console.error('CRM Reply Error:', error)
