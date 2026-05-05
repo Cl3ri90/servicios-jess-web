@@ -15,7 +15,7 @@ enum Role {
 
 model User {
   id        String   @id @default(uuid())
-  supabaseUserId  String   @unique
+  authId          String   @unique
   email           String   @unique
   name            String?
   role            Role     @default(OWNER)
@@ -25,7 +25,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  @@index([supabaseUserId])
+  @@index([authId])
 }
 
 model SiteConfig {

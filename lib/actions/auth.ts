@@ -46,7 +46,7 @@ export async function loginAction(formData: FormData) {
   }
 
   const dbUser = await prisma.user.findUnique({
-    where: { supabaseUserId: data.user.id }
+    where: { authId: data.user.id }
   });
 
   if (!dbUser) {

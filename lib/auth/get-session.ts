@@ -5,8 +5,8 @@ import { prisma } from '@/lib/prisma';
 import { Role } from '@prisma/client';
 
 export type AuthContext = {
-  id: string;
-  supabaseUserId: string;
+  authId: string;
+  userId: string;
   email: string;
   name: string | null;
   role: Role;
@@ -50,11 +50,11 @@ export async function getSession(): Promise<AuthContext> {
 
   const dbUser = await prisma.user.findUnique({
     where: {
-      supabaseUserId: authUser.id,
+      authId: authUser.id,
     },
     select: {
       id: true,
-      supabaseUserId: true,
+      authId: true,
       email: true,
       name: true,
       role: true,
@@ -71,8 +71,8 @@ export async function getSession(): Promise<AuthContext> {
   }
 
   return {
-    id: dbUser.id,
-    supabaseUserId: dbUser.supabaseUserId,
+    authId: dbUser.authId,
+    userId: dbUser.id,
     email: dbUser.email,
     name: dbUser.name,
     role: dbUser.role,

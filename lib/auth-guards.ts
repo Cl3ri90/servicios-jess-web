@@ -39,7 +39,7 @@ export async function getCurrentProfile() {
   if (!user) return null;
 
   const profile = await prisma.user.findUnique({
-    where: { supabaseUserId: user.id },
+    where: { authId: user.id },
   });
 
   if (!profile) {
@@ -49,10 +49,10 @@ export async function getCurrentProfile() {
         where: { email: user.email }
       });
 
-      if (existingByEmail && !existingByEmail.supabaseUserId) {
+      if (existingByEmail && !existingByEmail.authId) {
         const updated = await prisma.user.update({
           where: { id: existingByEmail.id },
-          data: { supabaseUserId: user.id }
+          data: { authId: user.id }
         });
         return updated;
       }

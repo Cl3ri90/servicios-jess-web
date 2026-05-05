@@ -133,7 +133,7 @@ export async function saveSeoConfig(prevState: any, formData: FormData) {
 
     await prisma.seoHistory.create({
        data: {
-         userId: session?.supabaseUserId || 'DEV',
+         userId: session?.authId || 'DEV',
          metaTitle: newConfig.global.siteTitle,
          metaDescription: newConfig.global.description,
        }
