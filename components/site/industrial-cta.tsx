@@ -13,7 +13,7 @@ export function IndustrialCTA() {
           <span className="block text-[var(--color-accent)] mt-2">Fabricamos las Respuestas.</span>
         </h2>
         
-        <p className="text-[var(--color-gray-soft)] text-lg md:text-xl font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-zinc-400 text-lg md:text-xl font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
           Envíanos tus planos o requerimientos técnicos. Nuestro equipo B2B cotizará y proyectará tu solución metalmecánica en 24 horas.
         </p>
 

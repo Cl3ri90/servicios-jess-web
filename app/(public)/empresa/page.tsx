@@ -22,7 +22,7 @@ export default async function EmpresaPage() {
         <div className="absolute inset-0 bg-gradient-to-tr from-neutral-950 via-neutral-900/80 to-neutral-800/20" />
         <div className="max-w-[1320px] mx-auto px-6 relative z-10">
           <h1 className="text-5xl md:text-6xl font-black mb-4 text-white uppercase tracking-tight">
-            <span className="text-[var(--color-primary)]">Nuestra</span> Empresa
+            <span className="text-[#ea580c]">Nuestra</span> Empresa
           </h1>
           <p className="text-xl font-light text-neutral-400 max-w-3xl">
             {config?.heroSubtitle || 'Más de una década resolviendo los problemas mecánicos y estructurales más complejos de la industria Chilena.'}
@@ -33,7 +33,7 @@ export default async function EmpresaPage() {
       <div className="max-w-[1320px] mx-auto px-6">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
             <div className="space-y-6">
-               <h2 className="text-3xl font-bold tracking-tight uppercase">Precisión <span className="text-[var(--color-primary)] text-base align-top px-1 font-mono">/ {companyInfo?.history ? 'HISTORIA' : '01'}</span></h2>
+               <h2 className="text-3xl font-bold tracking-tight uppercase">Precisión <span className="text-[#ea580c] text-base align-top px-1 font-mono">/ {companyInfo?.history ? 'HISTORIA' : '01'}</span></h2>
                <p className="text-neutral-400 leading-relaxed font-light text-xl whitespace-pre-wrap">
                  {companyInfo?.history || 'En Servicios Jess no fabricamos componentes genéricos. Desarrollamos soluciones metalmecánicas críticas que soportan el núcleo de tu operación productiva. Evaluamos materiales, geometrías y tolerancias térmicas. Nuestro compromiso radica en la resiliencia operativa y la reducción radical de tiempos de inactividad para cada infraestructura.'}
                </p>
@@ -57,7 +57,7 @@ export default async function EmpresaPage() {
                {companyInfo?.values && (
                  <div className="absolute inset-0 z-10 p-8 flex flex-col justify-end">
                     <h4 className="text-white font-bold tracking-widest text-sm uppercase mb-2">Valores</h4>
-                    <p className="text-[var(--color-primary)] font-mono text-xs">{companyInfo.values}</p>
+                    <p className="text-[#ea580c] font-mono text-xs">{companyInfo.values}</p>
                  </div>
                )}
             </div>

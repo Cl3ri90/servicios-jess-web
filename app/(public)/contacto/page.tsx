@@ -3,7 +3,7 @@ import { MapPin, Phone, Mail } from 'lucide-react';
 import { getSiteConfig } from '@/lib/site/get-site-config';
 import type { Metadata } from 'next';
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { config } = await getSiteConfig();
@@ -24,7 +24,7 @@ export default async function ContactPage() {
         <div className="absolute inset-0 bg-gradient-to-tr from-neutral-950 via-neutral-900/80 to-neutral-800/20" />
         <div className="max-w-[1320px] mx-auto px-6 text-center relative z-10">
           <h1 className="text-5xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-lg text-white uppercase">
-            Contacto <span className="text-[var(--color-primary)]">Técnico</span>
+            Contacto <span className="text-[#ea580c]">Técnico</span>
           </h1>
           <p className="text-xl text-neutral-400 max-w-2xl mx-auto font-light">
             Nuestro equipo de ingeniería está disponible para cotizaciones, mecanizado especializado y asesorías B2B.

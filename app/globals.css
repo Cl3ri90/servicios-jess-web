@@ -9,9 +9,9 @@
   --color-primary-dark: #C2410C;
   --color-accent: #EA580C; 
   --color-accent-hover: #C2410C;
-  --color-dark: #0F172A;
+  --color-dark: #050505;
   --color-light: #F8FAFC;
-  --color-gray-soft: #64748B;
+  --color-gray-soft: #a1a1aa;
   
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -44,7 +44,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #0F172A;
+  --foreground: #050505;
   
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -70,7 +70,7 @@
 }
 
 .dark {
-  --background: #020617; /* Slate 950 mapped */
+  --background: #050505; /* Slate 950 mapped */
   --foreground: #F8FAFC; /* Slate 50 mapped */
   
   --card: oklch(0.205 0 0);
@@ -87,12 +87,12 @@
   --ring: oklch(0.556 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: #ea580c;
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: #ea580c;
 }
 
 @layer base {

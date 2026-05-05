@@ -70,8 +70,8 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
                   href={item.path}
                   className={`text-[11px] font-bold tracking-[0.22em] transition-colors uppercase ${
                     isActive 
-                      ? 'text-white' 
-                      : 'text-[var(--color-gray-soft)] hover:text-white'
+                      ? 'text-[#ea580c] border-b-2 border-[#ea580c]' 
+                      : 'text-zinc-400 hover:text-[#ea580c]'
                   }`}
                 >
                   {item.name}
@@ -91,7 +91,7 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
 
           <button 
             onClick={() => setIsOpen((prev) => !prev)}
-            className="lg:hidden text-[var(--color-gray-soft)] hover:text-white"
+            className="lg:hidden text-zinc-400 hover:text-[#ea580c]"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {isOpen ? (

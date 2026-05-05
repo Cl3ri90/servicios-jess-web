@@ -49,8 +49,8 @@ export function HeroSection({
           className="max-w-4xl"
         >
           <div className="flex items-center justify-center md:justify-start gap-3 mb-6 mix-blend-screen">
-            <span className="h-0.5 w-12 bg-[var(--color-primary)] block"></span>
-            <span className="text-[var(--color-primary)] font-bold tracking-widest uppercase text-sm">{overline}</span>
+            <span className="h-0.5 w-12 bg-[#ea580c] block"></span>
+            <span className="text-[#ea580c] font-bold tracking-widest uppercase text-sm">{overline}</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight leading-tight mb-8 drop-shadow-2xl uppercase">
@@ -68,7 +68,7 @@ export function HeroSection({
           <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-10">
             <Link 
               href="/contacto" 
-              className="bg-[var(--color-primary)] hover:opacity-90 text-white px-8 py-4 font-bold rounded-sm shadow-[0_0_20px_var(--color-primary)] transition-all hover:shadow-[0_0_25px_var(--color-primary)] text-center text-sm uppercase tracking-widest block w-full sm:w-auto"
+              className="bg-[#ea580c] hover:bg-orange-600 text-white px-8 py-4 font-bold rounded-sm shadow-[0_0_20px_#ea580c] transition-all hover:shadow-[0_0_25px_#ea580c] text-center text-sm uppercase tracking-widest block w-full sm:w-auto"
             >
               Cotizar Proyecto
             </Link>
@@ -84,8 +84,8 @@ export function HeroSection({
       </div>
 
       {/* Industrial Accents */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--color-primary)] via-neutral-800 to-transparent z-20" />
-      <div className="absolute top-1/4 right-10 w-64 h-64 bg-[var(--color-primary)] opacity-5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#ea580c] via-neutral-800 to-transparent z-20" />
+      <div className="absolute top-1/4 right-10 w-64 h-64 bg-[#ea580c] opacity-5 rounded-full blur-[100px] pointer-events-none" />
     </section>
   );
 }

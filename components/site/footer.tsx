@@ -48,19 +48,19 @@ export function Footer({ brandName, email, phone, address, logoUrl, devSignature
             <ul className="flex flex-col gap-4 text-neutral-400 text-sm font-light">
               {address && (
                 <li className="flex gap-3">
-                  <span className="text-[var(--color-primary)]">📍</span>
+                  <span className="text-[#ea580c]">📍</span>
                   <span>{address.split(',').map((line, i) => <span key={i}>{line}<br/></span>)}</span>
                 </li>
               )}
               {phone && (
                 <li className="flex gap-3">
-                   <span className="text-[var(--color-primary)]">📞</span>
+                   <span className="text-[#ea580c]">📞</span>
                    <span><a href={`tel:${phone}`} className="hover:text-white transition-colors">{phone}</a></span>
                 </li>
               )}
               {email && (
                 <li className="flex gap-3">
-                   <span className="text-[var(--color-primary)]">✉️</span>
+                   <span className="text-[#ea580c]">✉️</span>
                    <span><a href={`mailto:${email}`} className="hover:text-white transition-colors">{email}</a></span>
                 </li>
               )}
@@ -86,7 +86,7 @@ export function Footer({ brandName, email, phone, address, logoUrl, devSignature
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link href="/politicas-de-privacidad" className="hover:text-neutral-400 tracking-widest uppercase text-[10px]">Políticas de Privacidad</Link>
               <Link href="/terminos-comerciales" className="hover:text-neutral-400 tracking-widest uppercase text-[10px]">Términos Comerciales</Link>
-             <Link href="/admin" className="hover:text-[var(--color-primary)] ml-4 border-l border-neutral-800 pl-4 py-1 tracking-widest uppercase text-[10px] font-bold">Portal Admin</Link>
+             <Link href="/admin" className="hover:text-[#ea580c] ml-4 border-l border-neutral-800 pl-4 py-1 tracking-widest uppercase text-[10px] font-bold">Portal Admin</Link>
            </div>
         </div>
       </div>

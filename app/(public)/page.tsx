@@ -5,6 +5,7 @@ import { getActiveServices } from '@/lib/site/get-services';
 import { getSiteConfig } from '@/lib/site/get-site-config';
 
 
+export const dynamic = "force-dynamic";
 
 export default async function PublicHomePage() {
   // 1. Buscamos la configuración de Servicios Jess en la DB

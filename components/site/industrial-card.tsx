@@ -11,7 +11,7 @@ type IndustrialCardProps = {
 
 export function IndustrialCard({ title, description, code, href, imageUrl }: IndustrialCardProps) {
   return (
-    <div className="group flex flex-col h-full overflow-hidden rounded-sm border border-slate-800/50 glass hover:border-[var(--color-accent)] hover:shadow-[0_0_40px_rgba(234,88,12,0.12)] transition-all">
+    <div className="group flex flex-col h-full overflow-hidden rounded-sm border border-zinc-800/50 glass hover:border-[var(--color-accent)] hover:shadow-[0_0_40px_rgba(234,88,12,0.12)] transition-all">
       
       {/* Upper Block: Image Placeholder or Image */}
       <div className="relative h-[220px] w-full bg-[var(--background)] overflow-hidden border-b border-white/5 group-hover:border-[var(--color-accent)]/30 transition-colors">
@@ -26,7 +26,7 @@ export function IndustrialCard({ title, description, code, href, imageUrl }: Ind
         )}
 
         {code && (
-          <div className="absolute top-4 left-4 bg-[var(--background)] border border-slate-800 px-2 py-1">
+          <div className="absolute top-4 left-4 bg-[var(--background)] border border-zinc-800 px-2 py-1">
             <span className="text-[11px] font-mono text-[var(--color-accent)] font-black tracking-widest">{code}</span>
           </div>
         )}
@@ -38,7 +38,7 @@ export function IndustrialCard({ title, description, code, href, imageUrl }: Ind
           {title}
         </h3>
         
-        <p className="text-[var(--color-gray-soft)] text-sm leading-relaxed mb-8 flex-1">
+        <p className="text-zinc-400 text-sm leading-relaxed mb-8 flex-1">
           {description}
         </p>
 

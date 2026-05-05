@@ -1,7 +1,7 @@
 import { getSiteConfig } from '@/lib/site/get-site-config';
 import type { Metadata } from 'next';
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { config } = await getSiteConfig();
@@ -37,7 +37,7 @@ export default async function PortafolioPage() {
         <div className="absolute inset-0 bg-gradient-to-tr from-neutral-950 via-neutral-900/80 to-neutral-800/20" />
         <div className="max-w-[1320px] mx-auto px-6 relative z-10">
           <h1 className="text-4xl md:text-5xl font-black mb-4 text-white uppercase tracking-tight">
-            <span className="text-[var(--color-primary)]">Portafolio</span> Técnico
+            <span className="text-[#ea580c]">Portafolio</span> Técnico
           </h1>
           <p className="text-xl font-light text-neutral-400 max-w-3xl">Casos de éxito y proyectos entregados bajo rigor normativo.</p>
         </div>
