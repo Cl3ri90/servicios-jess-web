@@ -16,7 +16,7 @@ export function TechnicalSheetsTable({ data }: { data: any[] }) {
       <div className="flex justify-end">
         <Link 
           href="?add=true" 
-          className="bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 rounded-md font-mono text-xs font-bold tracking-widest transition-colors"
+          className="bg-orange-600 hover:bg-orange-500 text-white min-h-[44px] flex items-center px-4 py-2 rounded-md font-mono text-xs font-bold tracking-widest transition-colors w-full sm:w-auto justify-center"
         >
           + AÑADIR FICHA
         </Link>
@@ -28,8 +28,8 @@ export function TechnicalSheetsTable({ data }: { data: any[] }) {
            <p className="text-zinc-500 text-sm max-w-sm text-center">Todavía no has subido ningún documento técnico o PDF al ecosistema de Storage.</p>
         </div>
       ) : (
-        <div className="border border-zinc-800 rounded-lg overflow-hidden bg-zinc-950">
-          <table className="w-full text-left text-sm text-zinc-400">
+        <div className="border border-zinc-800 rounded-lg overflow-x-auto bg-zinc-950">
+          <table className="w-full text-left text-sm text-zinc-400 min-w-max">
             <thead className="bg-zinc-900/50 border-b border-zinc-800 text-xs uppercase">
               <tr>
                 <th className="px-6 py-4 font-mono font-normal">Identidad del Archivo</th>
@@ -60,7 +60,7 @@ export function TechnicalSheetsTable({ data }: { data: any[] }) {
                   <td className="px-6 py-4 text-right">
                     <Link 
                       href={`?edit=${sheet.id}`} 
-                      className="text-orange-500 hover:text-orange-400 text-xs font-bold uppercase tracking-widest font-mono border border-orange-500/30 px-3 py-1 rounded bg-orange-500/10 hover:bg-orange-500/20 transition-colors"
+                      className="text-orange-500 hover:text-orange-400 text-xs font-bold uppercase tracking-widest font-mono border border-orange-500/30 px-3 min-h-[44px] flex items-center justify-center rounded bg-orange-500/10 hover:bg-orange-500/20 transition-colors"
                     >
                       EDITAR
                     </Link>

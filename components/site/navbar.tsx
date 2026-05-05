@@ -91,7 +91,10 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
 
           <button 
             onClick={() => setIsOpen((prev) => !prev)}
-            className="lg:hidden text-zinc-400 hover:text-[#ea580c]"
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
+            aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+            className="lg:hidden flex items-center justify-center min-h-[44px] min-w-[44px] text-zinc-400 hover:text-[#ea580c]"
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {isOpen ? (
@@ -106,8 +109,8 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 bg-zinc-950/95 backdrop-blur-md pt-24 px-6 pb-6 overflow-y-auto lg:hidden">
-          <div className="flex flex-col gap-6">
+        <div id="mobile-menu" className="fixed inset-0 z-40 bg-zinc-950/95 backdrop-blur-md pt-24 px-6 pb-6 overflow-y-auto lg:hidden flex flex-col">
+          <div className="flex flex-col gap-2">
             {navItems.map((item) => {
               const isActive = pathname === item.path;
               return (
@@ -115,7 +118,7 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
                   key={item.path}
                   href={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`text-xl font-bold tracking-[0.2em] transition-colors uppercase py-2 border-b border-white/10 ${
+                  className={`text-xl font-bold tracking-[0.2em] transition-colors uppercase py-3 px-2 flex items-center min-h-[44px] border-b border-white/10 ${
                     isActive 
                       ? 'text-[#ea580c]' 
                       : 'text-zinc-400 hover:text-white'
@@ -128,7 +131,7 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
             <Link 
               href="/contacto" 
               onClick={() => setIsOpen(false)}
-              className="mt-4 h-12 w-full bg-[#ea580c] text-white font-black text-sm uppercase tracking-[0.22em] hover:bg-orange-600 transition-colors rounded-sm flex items-center justify-center shadow-lg"
+              className="mt-6 h-14 w-full bg-[#ea580c] text-white font-black text-sm uppercase tracking-[0.22em] hover:bg-orange-600 transition-colors rounded-sm flex items-center justify-center shadow-lg"
             >
               INICIAR PROYECTO
             </Link>

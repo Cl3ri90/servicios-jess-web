@@ -49,12 +49,12 @@ export function DeveloperFlagsTable({ initialFlags }: { initialFlags: Flag[] }) 
   return (
     <div className="space-y-6">
       {/* Sistema manual de TABS para asegurar diseño ordenado sin instalar dependencias */}
-      <div className="flex flex-wrap gap-2 border-b border-zinc-800 pb-2">
+      <div className="flex overflow-x-auto whitespace-nowrap gap-2 border-b border-zinc-800 pb-2 scrollbar-hide">
         {CATEGORIES.map(cat => (
           <button
             key={cat}
             onClick={() => setActiveTab(cat)}
-            className={`px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors border-b-2 ${
+            className={`px-4 py-2 min-h-[44px] text-sm font-semibold rounded-t-lg transition-colors border-b-2 shrink-0 ${
               activeTab === cat 
                 ? 'border-orange-500 text-orange-500 bg-zinc-900/50' 
                 : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/20'
