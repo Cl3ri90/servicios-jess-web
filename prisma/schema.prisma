@@ -17,9 +17,7 @@ model User {
   id        String   @id @default(uuid())
   authId          String   @unique
   email           String   @unique
-  name            String?
   role            Role     @default(OWNER)
-  isActive        Boolean  @default(true)
   tenantId        String   @default("single")
   
   createdAt DateTime @default(now())

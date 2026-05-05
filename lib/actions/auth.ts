@@ -53,10 +53,6 @@ export async function loginAction(formData: FormData) {
     return { error: 'Usuario no encontrado en la base de datos.' };
   }
 
-  if (!dbUser.isActive) {
-    return { error: 'Tu cuenta está inactiva.' };
-  }
-
   if (dbUser.role === 'DEVELOPER') {
     redirect('/admin/developer');
   } else if (dbUser.role === 'OWNER') {

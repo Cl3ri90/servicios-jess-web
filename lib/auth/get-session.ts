@@ -8,9 +8,7 @@ export type AuthContext = {
   authId: string;
   userId: string;
   email: string;
-  name: string | null;
   role: Role;
-  isActive: boolean;
 } | null;
 
 export async function getSession(): Promise<AuthContext> {
@@ -38,15 +36,13 @@ export async function getSession(): Promise<AuthContext> {
   );
 
   const {
-    data: { session },
+    data: { user: authUser },
     error,
-  } = await supabase.auth.getSession();
+  } = await supabase.auth.getUser();
 
-  if (error || !session?.user) {
+  if (error || !authUser) {
     return null;
   }
-
-  const authUser = session.user;
 
   const dbUser = await prisma.user.findUnique({
     where: {
@@ -56,9 +52,7 @@ export async function getSession(): Promise<AuthContext> {
       id: true,
       authId: true,
       email: true,
-      name: true,
       role: true,
-      isActive: true,
     },
   });
 
@@ -66,16 +60,10 @@ export async function getSession(): Promise<AuthContext> {
     return null;
   }
 
-  if (dbUser.isActive === false) {
-    return null;
-  }
-
   return {
-    authId: dbUser.authId,
+    authId: authUser.id,
     userId: dbUser.id,
-    email: dbUser.email,
-    name: dbUser.name,
     role: dbUser.role,
-    isActive: dbUser.isActive,
+    email: dbUser.email,
   };
 }
