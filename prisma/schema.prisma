@@ -149,7 +149,12 @@ model Lead {
   company            String?
   message            String    @db.Text
   status             String    @default("NEW")
+  priority           String    @default("NORMAL")
   source             String    @default("web")
+  pageUrl            String?
+  internalNote       String?   @db.Text
+  userAgent          String?
+  ipAddress          String?
   emailStatus        String    @default("pending")
   emailError         String?   @db.Text
   lastEmailAttemptAt DateTime?
