@@ -18,6 +18,9 @@ import {
   MonitorOff,
   ChevronLeft
 } from 'lucide-react'
+import { LivePreviewShell } from './live-preview-shell'
+import { DirtySaveBtn } from './dirty-save-btn'
+import { HeroSection } from '../site/hero-section'
 
 // Tab definitions (Base)
 const TABS = [
@@ -188,15 +191,7 @@ function ConfigFormContent({
           </p>
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
-          <button 
-            type="submit" 
-            form="global-config-form"
-            disabled={loading}
-            className="w-full sm:w-auto flex justify-center items-center gap-2 px-6 min-h-[44px] bg-[var(--color-primary)] text-white font-bold rounded-lg hover:bg-[var(--color-primary)]/80 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(234,88,12,0.2)]"
-          >
-            {loading ? <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
-            {loading ? 'Guardando...' : 'Guardar Cambios'}
-          </button>
+          <DirtySaveBtn isDirty={isDirty} isSaving={loading} form="global-config-form" />
         </div>
       </div>
 
@@ -354,7 +349,22 @@ function ConfigFormContent({
           <section className={`p-8 space-y-8 ${currentTab !== 'contenido' ? 'hidden' : 'block'}`}>
             {(isDeveloper || flags.allowEditHero) && (
               <div className="space-y-6">
-                <h3 className="text-xl font-bold text-white border-b border-neutral-800 pb-2">Hero Section (Banner Principal)</h3>
+                
+                <LivePreviewShell title="Vista Previa: Hero Section">
+                  <div className="transform scale-[0.6] sm:scale-75 origin-top min-h-[400px]">
+                    <HeroSection 
+                      title={watch('heroTitle') || 'Título Principal'}
+                      content={watch('heroSubtitle') || 'Descripción del hero'}
+                      imageUrl={(watch as any)('heroBgFile')?.[0] ? URL.createObjectURL((watch as any)('heroBgFile')[0]) : initialSettings.heroBgUrl}
+                      btnText={(watch as any)('heroBtnText')}
+                      btnLink={(watch as any)('heroBtnLink')}
+                      secBtnText={(watch as any)('heroSecBtnText')}
+                      secBtnLink={(watch as any)('heroSecBtnLink')}
+                    />
+                  </div>
+                </LivePreviewShell>
+
+                <h3 className="text-xl font-bold text-white border-b border-neutral-800 pb-2">Configuración de Hero</h3>
                 <div className="grid grid-cols-1 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-neutral-400 mb-2">Título de Impacto (H1)</label>

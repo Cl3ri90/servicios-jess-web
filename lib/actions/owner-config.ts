@@ -29,6 +29,7 @@ export async function updateOwnerConfig(prevState: any, formData: FormData): Pro
     });
     revalidatePath('/admin/owner/configuracion');
     revalidatePath('/');
+    revalidatePath('/login');
     return { success: true, message: 'Información operativa actualizada' };
   } catch (err) {
     return { success: false, error: 'Error escribiendo en BD' };

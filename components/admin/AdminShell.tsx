@@ -13,9 +13,10 @@ type AdminShellProps = {
   title: string;
   subtitle: string;
   basePath: string;
+  logoUrl?: string | null;
 };
 
-export function AdminShell({ children, role, links, title, subtitle, basePath }: AdminShellProps) {
+export function AdminShell({ children, role, links, title, subtitle, basePath, logoUrl }: AdminShellProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -43,7 +44,11 @@ export function AdminShell({ children, role, links, title, subtitle, basePath }:
           >
             <Menu className="w-6 h-6" />
           </button>
-          <span className="text-[#ea580c] font-black uppercase tracking-tight">{title}</span>
+          {logoUrl ? (
+            <img src={logoUrl} alt={title} className="h-8 w-auto object-contain" />
+          ) : (
+            <span className="text-[#ea580c] font-black uppercase tracking-tight">{title}</span>
+          )}
         </div>
       </header>
 
@@ -63,10 +68,16 @@ export function AdminShell({ children, role, links, title, subtitle, basePath }:
         className={`fixed inset-y-0 left-0 z-50 w-[82vw] max-w-80 bg-zinc-950 p-6 flex flex-col gap-6 shrink-0 border-r border-zinc-800 justify-between transition-transform duration-300 lg:static lg:translate-x-0 lg:w-64 lg:z-0 lg:h-screen ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex flex-col gap-6 h-full overflow-y-auto">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-xl text-[#ea580c] font-black uppercase tracking-tight">{title}</h1>
-                <p className="text-[10px] text-zinc-500 mt-1 uppercase tracking-widest font-mono">{subtitle}</p>
+            <div className="flex items-start justify-between min-h-[48px]">
+              <div className="flex flex-col gap-1 w-full pr-2">
+                {logoUrl ? (
+                  <div className="h-10 w-full flex items-center justify-start">
+                    <img src={logoUrl} alt={title} className="h-8 w-auto object-contain" />
+                  </div>
+                ) : (
+                  <h1 className="text-xl text-[#ea580c] font-black uppercase tracking-tight leading-none">{title}</h1>
+                )}
+                <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-mono leading-none">{subtitle}</p>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}

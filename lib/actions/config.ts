@@ -167,6 +167,7 @@ export async function updateGlobalSettings(formData: FormData) {
 
     revalidatePath('/', 'layout');
     revalidatePath('/admin', 'layout');
+    revalidatePath('/login');
 
     return { success: 'Configuración guardada y assets actualizados.' };
 

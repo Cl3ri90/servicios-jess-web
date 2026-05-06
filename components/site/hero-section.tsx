@@ -8,13 +8,21 @@ type HeroProps = {
   content: string;
   imageUrl?: string | null;
   overline?: string;
+  btnText?: string;
+  btnLink?: string;
+  secBtnText?: string;
+  secBtnLink?: string;
 };
 
 export function HeroSection({ 
   title, 
   content, 
   imageUrl,
-  overline = 'Servicios Especializados'
+  overline = 'Servicios Especializados',
+  btnText = 'Cotizar Proyecto',
+  btnLink = '/contacto',
+  secBtnText = 'Nuestras Capacidades',
+  secBtnLink = '/servicios'
 }: HeroProps) {
   const bgImage = imageUrl || "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?q=80&w=2670&auto=format&fit=crop";
 
@@ -23,17 +31,12 @@ export function HeroSection({
       
       {/* --- CAPA DE EFECTOS INDUSTRIALES (z-0) --- */}
       <div className="absolute inset-0 z-0">
-        {/* 1. Imagen optimizada para fondo */}
         <img 
           src={bgImage} 
           alt="Hero Background Servicios Jess" 
           className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale blur-[2px] scale-105 mix-blend-luminosity transition-all duration-[3000ms]" 
         />
-        
-        {/* 2. Overlay Gradiente de Alto Contraste */}
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-900/60 to-neutral-950 z-0" />
-        
-        {/* 3. Patrón Técnico Radial */}
         <div 
           className="absolute inset-0 opacity-20 mix-blend-overlay z-0" 
           style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #52525B 1px, transparent 1px)', backgroundSize: '32px 32px' }} 
@@ -61,24 +64,28 @@ export function HeroSection({
             ))}
           </h1>
           
-          <p className="text-lg sm:text-xl lg:text-2xl text-neutral-300 mb-10 max-w-xl lg:max-w-2xl font-light leading-relaxed mx-auto md:mx-0">
+          <p className="text-lg sm:text-xl lg:text-2xl text-neutral-300 mb-10 max-w-xl lg:max-w-2xl font-light leading-relaxed mx-auto md:mx-0 whitespace-pre-wrap">
             {content}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-10">
-            <Link 
-              href="/contacto" 
-              className="bg-[#ea580c] hover:bg-orange-600 text-white px-8 py-4 min-h-[44px] flex items-center justify-center font-bold rounded-sm shadow-[0_0_20px_#ea580c] transition-all hover:shadow-[0_0_25px_#ea580c] text-sm uppercase tracking-widest w-full sm:w-auto"
-            >
-              Cotizar Proyecto
-            </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mt-10 w-full sm:w-auto">
+            {btnText && (
+              <Link 
+                href={btnLink || '/'} 
+                className="bg-[#ea580c] hover:bg-orange-600 text-white px-8 py-4 min-h-[44px] flex items-center justify-center font-bold rounded-sm shadow-[0_0_20px_rgba(234,88,12,0.4)] transition-all hover:shadow-[0_0_25px_rgba(234,88,12,0.6)] text-sm uppercase tracking-widest w-full sm:w-auto"
+              >
+                {btnText}
+              </Link>
+            )}
             
-            <Link 
-              href="/servicios" 
-              className="bg-transparent border border-neutral-600 hover:border-neutral-400 text-white px-8 py-4 min-h-[44px] flex items-center justify-center font-bold rounded-sm transition-colors text-sm uppercase tracking-widest w-full sm:w-auto glass"
-            >
-              Nuestras Capacidades
-            </Link>
+            {secBtnText && (
+              <Link 
+                href={secBtnLink || '/'} 
+                className="bg-transparent border border-neutral-600 hover:border-neutral-400 text-white px-8 py-4 min-h-[44px] flex items-center justify-center font-bold rounded-sm transition-colors text-sm uppercase tracking-widest w-full sm:w-auto glass"
+              >
+                {secBtnText}
+              </Link>
+            )}
           </div>
         </motion.div>
       </div>

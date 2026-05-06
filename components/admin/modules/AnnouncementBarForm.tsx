@@ -1,10 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AnnouncementBarConfig, saveAnnouncementBar } from '@/lib/actions/announcement'
 import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
-import { AlertCircle, CheckCircle2, Save } from 'lucide-react'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
+import { LivePreviewShell } from '@/components/admin/live-preview-shell'
+import { DirtySaveBtn } from '@/components/admin/dirty-save-btn'
+import { AnnouncementBarClient } from '@/components/site/announcement-bar-client'
 
 interface Props {
   tenantId: string
@@ -16,13 +19,18 @@ export function AnnouncementBarForm({ tenantId, initialData, isDeveloperView }: 
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [isDirty, setIsDirty] = useState(false)
 
-  const { register, handleSubmit, watch } = useForm({
+  const { register, handleSubmit, watch, reset, formState: { isDirty: formIsDirty } } = useForm({
     defaultValues: initialData
   })
 
   // Watch values for live preview
   const watchedValues = watch()
+
+  useEffect(() => {
+    setIsDirty(formIsDirty);
+  }, [formIsDirty]);
 
   const onSubmit = async (data: any) => {
     setLoading(true)
@@ -43,7 +51,11 @@ export function AnnouncementBarForm({ tenantId, initialData, isDeveloperView }: 
 
       const res = await saveAnnouncementBar(formData)
       if (res.error) setError(res.error)
-      if (res.success) setMessage(typeof res.success === 'string' ? res.success : 'Actualización exitosa.')
+      if (res.success) {
+        setMessage(typeof res.success === 'string' ? res.success : 'Actualización exitosa.')
+        reset(data) // Reset form to new values, making isDirty false
+        setIsDirty(false)
+      }
     } catch (e) {
       setError('Error al conectar con el servidor.')
     } finally {
@@ -55,22 +67,8 @@ export function AnnouncementBarForm({ tenantId, initialData, isDeveloperView }: 
   const labelClass = "block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-1"
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Live preview */}
-      {watchedValues.isActive && watchedValues.text && (
-        <div className="space-y-2">
-          <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500 ml-1">Vista Previa en Tiempo Real</p>
-          <div
-            className="rounded-lg px-4 py-3 text-sm font-medium flex items-center justify-between gap-4 shadow-xl border border-white/5"
-            style={{ backgroundColor: watchedValues.bgColor, color: watchedValues.textColor }}
-          >
-            <span>{watchedValues.text}</span>
-            {watchedValues.ctaText && <span className="underline font-bold shrink-0">{watchedValues.ctaText} →</span>}
-          </div>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 space-y-6 shadow-2xl">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <form id="announcement-form" onSubmit={handleSubmit(onSubmit)} className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 space-y-6 shadow-2xl relative order-2 lg:order-1">
         {message && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 bg-green-500/10 text-green-400 border border-green-500/20 rounded-lg flex items-center gap-3">
             <CheckCircle2 className="w-5 h-5" />
@@ -167,19 +165,39 @@ export function AnnouncementBarForm({ tenantId, initialData, isDeveloperView }: 
           </div>
         </div>
 
-        <button 
-          disabled={loading}
-          type="submit" 
-          className="bg-orange-600 hover:bg-orange-500 active:scale-95 disabled:opacity-50 disabled:active:scale-100 text-white font-black py-4 px-8 rounded-xl transition-all uppercase tracking-widest w-full flex items-center justify-center gap-3 shadow-lg shadow-orange-950/20"
-        >
-          {loading ? (
-            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-          ) : (
-            <Save className="w-5 h-5" />
-          )}
-          {loading ? 'Guardando...' : 'Guardar Configuración'}
-        </button>
+        <div className="pt-4 border-t border-neutral-800">
+          <DirtySaveBtn 
+            isDirty={isDirty} 
+            isSaving={loading} 
+            form="announcement-form" 
+            label="Guardar Configuración" 
+            className="w-full"
+          />
+        </div>
       </form>
+
+      {/* Sidebar Live Preview */}
+      <div className="order-1 lg:order-2 lg:sticky lg:top-8 h-fit">
+        <LivePreviewShell title="Sandbox: Anuncio de Emergencia" className="mb-0">
+          <div className="p-6 bg-zinc-950 flex flex-col justify-center min-h-[250px]">
+            {String(watchedValues.isActive) === 'true' && watchedValues.text ? (
+              <AnnouncementBarClient 
+                text={watchedValues.text}
+                ctaText={watchedValues.ctaText}
+                ctaUrl={watchedValues.ctaUrl}
+                bgColor={watchedValues.bgColor}
+                textColor={watchedValues.textColor}
+                dismissible={String(watchedValues.dismissible) === 'true'}
+                isPreview={true}
+              />
+            ) : (
+              <div className="text-center p-8 border border-neutral-800 border-dashed rounded-lg">
+                <p className="text-neutral-500 text-sm">El anuncio está oculto o sin texto.</p>
+              </div>
+            )}
+          </div>
+        </LivePreviewShell>
+      </div>
     </div>
   )
 }

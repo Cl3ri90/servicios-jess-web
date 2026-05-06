@@ -46,7 +46,7 @@ export async function createClient(formData: FormData) {
     })
 
     revalidatePath('/admin/owner/clientes')
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true, message: 'Cliente agregado exitosamente.' }
   } catch (err: any) {
     console.error(err)
@@ -61,7 +61,7 @@ export async function deleteClient(id: string) {
     await prisma.client.delete({ where: { id } })
     
     revalidatePath('/admin/owner/clientes')
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true, message: 'Cliente eliminado.' }
   } catch (error: any) {
     console.error(error)

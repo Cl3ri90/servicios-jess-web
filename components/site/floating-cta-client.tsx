@@ -13,7 +13,7 @@ interface CTAConfig {
   openInNewTab: boolean;
 }
 
-export function FloatingCTAClient({ config }: { config: CTAConfig }) {
+export function FloatingCTAClient({ config, isPreview = false }: { config: CTAConfig, isPreview?: boolean }) {
   const Icon = config.iconName ? (LucideIcons as any)[config.iconName] : null;
 
   // Determinar clases de posición (Tailwind CSS)
@@ -28,8 +28,10 @@ export function FloatingCTAClient({ config }: { config: CTAConfig }) {
   const target = (config.openInNewTab || isExternal) ? '_blank' : undefined;
   const rel = target === '_blank' ? 'noopener noreferrer' : undefined;
 
+  const positionType = isPreview ? "absolute" : "fixed";
+
   return (
-    <div className={`fixed z-[999] transition-all duration-300 transform hover:scale-105 ${posClasses}`}>
+    <div className={`${positionType} z-[999] transition-all duration-300 transform hover:scale-105 ${posClasses}`}>
       {isExternal ? (
         <a 
           href={config.href} 

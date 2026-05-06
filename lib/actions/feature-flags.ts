@@ -27,7 +27,10 @@ export async function updateFeatureFlag(data: unknown) {
     });
     
     revalidatePath('/admin', 'layout');
+    revalidatePath('/admin/developer/trust');
+    revalidatePath('/admin/owner/trust');
     revalidatePath('/', 'layout');
+    revalidatePath('/');
     return { success: true, message: 'Feature Flag actualizada correctamente' };
   } catch (error) {
     return { success: false, error: 'Error actualizando registro' };

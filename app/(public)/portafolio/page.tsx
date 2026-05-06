@@ -1,5 +1,6 @@
 import { getSiteConfig } from '@/lib/site/get-site-config';
 import type { Metadata } from 'next';
+import { PortfolioCard } from '@/components/site/portfolio-card';
 
 export const dynamic = "force-dynamic";
 
@@ -46,31 +47,15 @@ export default async function PortafolioPage() {
       <div className="max-w-[1320px] mx-auto px-6 pb-24">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {portfolios.map(item => (
-              <div key={item.id} className="group bg-neutral-900 border border-neutral-800 overflow-hidden flex flex-col hover:border-[var(--color-primary)]/50 transition-colors glass">
-                <div className="aspect-video relative bg-neutral-950 overflow-hidden mix-blend-luminosity hover:mix-blend-normal transition-all duration-500">
-                  {item.featuredImage ? (
-                    <img src={item.featuredImage} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center opacity-30">
-                       <p className="text-neutral-500 font-mono text-sm">[ DATA FOTOGRÁFICA RESERVADA ]</p>
-                    </div>
-                  )}
-                  {item.category && (
-                    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm border border-neutral-700 text-xs px-2 py-1 uppercase tracking-widest text-[var(--color-primary)] font-semibold">
-                      {item.category}
-                    </div>
-                  )}
-                </div>
-                <div className="p-8 flex flex-col">
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    {item.title}
-                  </h3>
-                  {item.clientName && <p className="text-[var(--color-primary)] text-sm font-semibold tracking-wider uppercase mb-4">Cliente: {item.clientName}</p>}
-                  <p className="text-neutral-400 text-sm font-light leading-relaxed mb-6">
-                    {item.specs || 'Sin especificación pública detallada.'}
-                  </p>
-                </div>
-              </div>
+              <PortfolioCard 
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                clientName={item.clientName}
+                featuredImage={item.featuredImage}
+                category={item.category}
+                specs={item.specs}
+              />
             ))}
          </div>
       </div>

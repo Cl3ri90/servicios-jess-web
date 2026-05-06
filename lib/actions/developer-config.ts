@@ -32,6 +32,7 @@ export async function updateDeveloperConfig(prevState: any, formData: FormData) 
     });
     revalidatePath('/admin/developer/configuracion');
     revalidatePath('/');
+    revalidatePath('/login');
     return { success: true, message: 'Configuración maestra actualizada' };
   } catch (err) {
     return { success: false, error: 'Error escribiendo en BD' };

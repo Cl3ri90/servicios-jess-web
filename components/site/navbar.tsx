@@ -42,12 +42,12 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
       >
         <div className="max-w-[1320px] mx-auto px-6 h-20 flex items-center justify-between">
           
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-3 group h-12 w-[120px] sm:w-[150px]">
             {logoUrl ? (
               <img
                 src={logoUrl}
                 alt={brandName ?? "Servicios Jess"}
-                className="h-10 w-auto object-contain"
+                className="h-10 sm:h-12 w-auto object-contain"
               />
             ) : (
               <>

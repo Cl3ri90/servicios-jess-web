@@ -1,34 +1,32 @@
 import { HeroSection } from '@/components/site/hero-section';
 import { ServicesSection } from '@/components/site/services-section';
-import { IndustrialCTA } from '@/components/site/industrial-cta';
+import { TrustSection } from '@/components/site/trust-section';
 import { getActiveServices } from '@/lib/site/get-services';
 import { getSiteConfig } from '@/lib/site/get-site-config';
-
+import { getActiveClients } from '@/lib/site/get-clients';
 
 export const dynamic = "force-dynamic";
 
 export default async function PublicHomePage() {
-  // 1. Buscamos la configuración de Servicios Jess en la DB
   const { config, activeFlags } = await getSiteConfig();
   const services = await getActiveServices();
+  const { clients } = await getActiveClients();
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* 2. Llamamos a TU componente HeroSection con la data dinámica */}
       <HeroSection 
         title={config?.heroTitle || 'Excelencia Metalmecánica y Estructural'} 
         content={config?.heroSubtitle || 'Soluciones industriales de alta precisión.'}
-        // Pasamos la URL de Supabase que guardamos en el admin
         imageUrl={config?.heroBgUrl} 
         overline="Servicios Especializados"
       />
-      {activeFlags.includes('capacidades') && (
-        <ServicesSection services={services} />
+      
+      {clients.length > 0 && (
+        <TrustSection clients={clients} />
       )}
 
-      {/* Controlamos si el CTA se muestra o no según el Admin usando Feature Flags */}
-      {activeFlags.includes('cta_flotante') && (
-        <IndustrialCTA />
+      {activeFlags.includes('capacidades') && (
+        <ServicesSection services={services} />
       )}
     </div>
   );

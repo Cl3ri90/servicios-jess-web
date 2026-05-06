@@ -1,7 +1,7 @@
 import { getSiteConfig } from '@/lib/site/get-site-config';
 import { prisma } from '@/lib/prisma';
 import type { Metadata } from 'next';
-import { CompanyMetricsCard } from '@/components/site/company-metrics-card';
+import { EmpresaSection } from '@/components/site/empresa-section';
 
 export const revalidate = 60;
 
@@ -31,30 +31,11 @@ export default async function EmpresaPage() {
         </div>
       </div>
       
-      <div className="max-w-[1320px] mx-auto px-6">
-         <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-8 lg:gap-16 items-start lg:items-center mb-24">
-            <div className="space-y-6">
-               <h2 className="text-3xl font-bold tracking-tight uppercase">Precisión <span className="text-[#ea580c] text-base align-top px-1 font-mono">/ {companyInfo?.history ? 'HISTORIA' : '01'}</span></h2>
-               <p className="text-zinc-300 leading-relaxed font-light text-lg sm:text-xl whitespace-pre-wrap max-w-prose">
-                 {companyInfo?.history || 'En Servicios Jess no fabricamos componentes genéricos. Desarrollamos soluciones metalmecánicas críticas que soportan el núcleo de tu operación productiva. Evaluamos materiales, geometrías y tolerancias térmicas. Nuestro compromiso radica en la resiliencia operativa y la reducción radical de tiempos de inactividad para cada infraestructura.'}
-               </p>
-               {companyInfo?.mission && (
-                 <div className="pt-4 border-t border-neutral-800">
-                    <h3 className="text-xl font-bold text-white mb-2 uppercase">Misión</h3>
-                    <p className="text-neutral-400 font-light">{companyInfo.mission}</p>
-                 </div>
-               )}
-               {companyInfo?.vision && (
-                 <div className="pt-4 border-t border-neutral-800">
-                    <h3 className="text-xl font-bold text-white mb-2 uppercase">Visión</h3>
-                    <p className="text-neutral-400 font-light">{companyInfo.vision}</p>
-                 </div>
-               )}
-            </div>
-            
-            <CompanyMetricsCard />
-         </div>
-      </div>
+      <EmpresaSection 
+        history={companyInfo?.history}
+        mission={companyInfo?.mission}
+        vision={companyInfo?.vision}
+      />
     </div>
   );
 }

@@ -289,3 +289,37 @@ model TechnicalSheet {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+model MainCtaConfig {
+  id                  String   @id @default("main-cta-config")
+  tenantId            String   @default("single")
+
+  isEnabled           Boolean  @default(true)
+
+  eyebrow             String?  @default("SOLUCIONES INDUSTRIALES")
+  titleLine1          String   @default("¿Proyectos de Alta Exigencia?")
+  titleHighlight      String   @default("Fabricamos las Respuestas.")
+  description         String   @default("Envíanos tus planos o requerimientos técnicos. Nuestro equipo B2B cotizará y proyectará tu solución metalmecánica en 24 horas.")
+
+  buttonText          String   @default("Iniciar Proyecto")
+  buttonUrl           String   @default("/contacto")
+
+  backgroundColor     String   @default("#0a0a0a")
+  textColor           String   @default("#ffffff")
+  accentColor         String   @default("#ea580c")
+
+  backgroundImageUrl  String?
+  overlayOpacity      Int      @default(80)
+
+  alignment           String   @default("center")
+  variant             String   @default("industrial-center")
+
+  showOnHome          Boolean  @default(true)
+  showOnEmpresa       Boolean  @default(false)
+  showOnServicios     Boolean  @default(false)
+  showOnPortfolio     Boolean  @default(false)
+  showOnContacto      Boolean  @default(false)
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}

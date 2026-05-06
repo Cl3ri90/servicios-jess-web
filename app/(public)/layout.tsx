@@ -1,7 +1,9 @@
 import { getSiteConfig } from '@/lib/site/get-site-config';
+import { getMainCtaConfig } from '@/lib/site/get-main-cta';
 import { Navbar } from '@/components/site/navbar';
 import { Footer } from '@/components/site/footer';
 import { FloatingCTAWrapper } from '@/components/site/floating-cta';
+import { MainCtaWrapper } from '@/components/site/main-cta-wrapper';
 import { Inter } from 'next/font/google';
 import '@/app/globals.css';
 
@@ -26,6 +28,7 @@ export async function generateMetadata() {
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const { config, activeFlags } = await getSiteConfig();
+  const mainCtaConfig = await getMainCtaConfig();
 
   return (
     <>
@@ -37,6 +40,7 @@ export default async function PublicLayout({ children }: { children: React.React
       <main className="flex-1 pt-0">
         {children}
       </main>
+      <MainCtaWrapper config={mainCtaConfig} activeFlags={activeFlags} />
       <FloatingCTAWrapper />
       <Footer 
         brandName={config?.name || 'SERVICIOS JESS'}

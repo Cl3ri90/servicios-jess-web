@@ -1,28 +1,36 @@
-export function TrustSection() {
+export function TrustSection({ clients }: { clients: any[] }) {
+  if (!clients || clients.length === 0) return null;
+
+  // Duplicamos la lista varias veces para asegurar que el carrusel siempre se vea lleno
+  const duplicatedClients = [...clients, ...clients, ...clients, ...clients, ...clients, ...clients];
+
   return (
-    <section className="w-full bg-white py-24 border-b border-zinc-100 relative">
-      <div className="max-w-7xl mx-auto px-6 text-center">
-        <p className="text-zinc-400 font-semibold text-sm tracking-widest uppercase mb-12">
-          Hacen posible sus operaciones gracias a nosotros
+    <section className="w-full bg-[#050505] py-20 border-y border-white/5 overflow-hidden relative">
+      <div className="max-w-7xl mx-auto px-6 text-center mb-10">
+        <p className="text-zinc-500 font-bold text-xs tracking-[0.2em] uppercase">
+          Empresas que confían en nuestra ingeniería
         </p>
+      </div>
+      
+      {/* Carrusel container con máscara de difuminado en los bordes */}
+      <div className="relative w-full overflow-hidden flex [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
         
-        <div className="flex flex-wrap items-center justify-center gap-12 lg:gap-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-zinc-800 rounded-lg"></div>
-            <span className="font-black text-2xl tracking-tighter text-zinc-900">NEXUS</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full border-[6px] border-zinc-800"></div>
-            <span className="font-extrabold text-2xl tracking-tight text-zinc-900">AERODYNE</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 bg-zinc-800 transform rotate-45"></div>
-            <span className="font-black text-2xl tracking-tighter text-zinc-900">MINETEC</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-3 bg-zinc-800"></div>
-            <span className="font-extrabold text-xl tracking-widest text-zinc-900 uppercase">Logistics</span>
-          </div>
+        {/* Track que se anima de forma infinita y pausa en hover */}
+        <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center gap-16 pr-16">
+          {duplicatedClients.map((client, index) => (
+            <div 
+              key={`${client.id}-${index}`} 
+              className="flex items-center justify-center min-w-[160px] h-14 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default"
+            >
+              {client.logoUrl ? (
+                <img src={client.logoUrl} alt={client.name} className="max-h-full max-w-full object-contain" />
+              ) : (
+                <span className="font-black text-xl tracking-tighter text-zinc-300 whitespace-nowrap">
+                  {client.name}
+                </span>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </section>

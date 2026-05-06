@@ -17,6 +17,7 @@ const allLinks: AdminMenuLink[] = [
   { label: 'Empresas Trust', href: '/admin/owner/clientes', icon: 'shield', flagKey: 'trust' },
   { label: 'Indicadores KPI', href: '/admin/owner/metricas', icon: 'activity', flagKey: 'indicadores' },
   { label: 'SEO Core', href: '/admin/developer/seo', icon: 'search', developerOnly: true },
+  { label: 'Llamada de Acción', href: '/admin/owner/llamada-accion', icon: 'zap', flagKey: 'cta_principal' },
   { label: 'Anuncio Emergencia', href: '/admin/owner/anuncio', icon: 'megaphone', flagKey: 'barra_anuncio' },
   { label: 'Pop-Up Comercial', href: '/admin/owner/popup', icon: 'message-square', flagKey: 'popup_promocional' },
   { label: 'Catálogo de Fichas', href: '/admin/developer/catalogo-fichas', icon: 'file-text', flagKey: 'fichas_tecnicas', developerOnly: true },
@@ -24,8 +25,8 @@ const allLinks: AdminMenuLink[] = [
 
 const devLinks: AdminMenuLink[] = [
   { label: 'Feature Flags', href: '/admin/developer/flags', icon: 'zap', isGlobal: true },
-  { label: 'Botón Flotante CTA', href: '/admin/developer/cta-flotante', icon: 'mouse-pointer', isGlobal: true },
   { label: 'Identidad Empresa', href: '/admin/developer/empresa', icon: 'home', isGlobal: true },
+  { label: 'Botón Flotante CTA', href: '/admin/developer/cta-flotante', icon: 'mouse-pointer', isGlobal: true },
 ];
 
 export async function getDynamicMenu(role: 'DEVELOPER' | 'OWNER') {
@@ -36,6 +37,11 @@ export async function getDynamicMenu(role: 'DEVELOPER' | 'OWNER') {
       if (!link.flagKey) return true;
       const flag = flags.find((item: { key: string }) => item.key === link.flagKey);
       return flag?.isActive;
+    }).map(link => {
+      if (link.label === 'Llamada de Acción') {
+        return { ...link, href: '/admin/developer/llamada-accion' };
+      }
+      return link;
     });
     return [...devLinks, ...activeDeveloperLinks];
   }

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db/prisma'
 import { ClientForm, DeleteClientButton } from '@/components/admin/ClientForm'
+import { getModuleFlag } from '@/lib/site/get-module-flag'
 
 export default async function ClientesView({ tenantId }: { tenantId: string }) {
   // @ts-ignore
@@ -8,11 +9,44 @@ export default async function ClientesView({ tenantId }: { tenantId: string }) {
     orderBy: { order: 'asc' }
   })
 
+  const flag = await getModuleFlag('trust')
+
+  // Diagnostic logic
+  let diagnostic = { status: 'success', text: 'Visible en web pública' };
+  if (!flag.isActive) {
+    diagnostic = { status: 'error', text: 'El motor principal del módulo está apagado.' };
+  } else if (!flag.renderPublic) {
+    diagnostic = { status: 'warning', text: 'Render público desactivado desde Feature Flags.' };
+  } else if (clientes.length === 0) {
+    diagnostic = { status: 'warning', text: 'No hay logos cargados.' };
+  } else if (!clientes.some((c: any) => c.logoUrl)) {
+    diagnostic = { status: 'warning', text: 'Hay clientes registrados, pero no tienen logo válido.' };
+  }
+
   return (
     <div className="max-w-5xl mx-auto pb-20">
       <div className="mb-8 border-b border-neutral-800 pb-4">
         <h2 className="text-3xl font-black text-white">Trust y Clientes B2B</h2>
         <p className="text-neutral-400 mt-2">Configura los logos de empresas que confían en tu manufactura. Se usarán de prueba social en el Home.</p>
+      </div>
+
+      <div className="mb-8 p-5 rounded-lg border border-neutral-800 bg-neutral-900 shadow-xl">
+        <h3 className="text-xs font-black uppercase tracking-widest text-neutral-500 mb-4">Estado de Render Público</h3>
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-md border font-bold text-sm tracking-wide ${
+          diagnostic.status === 'success' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
+          diagnostic.status === 'warning' ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' : 
+          'bg-red-500/10 text-red-500 border-red-500/20'
+        }`}>
+          {diagnostic.status === 'success' && <span>✅</span>}
+          {diagnostic.status === 'warning' && <span>🟡</span>}
+          {diagnostic.status === 'error' && <span>🔴</span>}
+          {diagnostic.text}
+        </div>
+        {diagnostic.status !== 'success' && (
+          <p className="mt-3 text-xs text-neutral-400">
+            Resuelve esta advertencia para que la franja de logos aparezca en la página de inicio.
+          </p>
+        )}
       </div>
 
       <ClientForm tenantId={tenantId} />
