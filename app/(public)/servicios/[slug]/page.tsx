@@ -1,8 +1,9 @@
 import { prisma } from '@/lib/db/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { FileText, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
+import { RichTextContent } from '@/components/shared/rich-text-content';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
@@ -51,20 +52,20 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
       <div className="max-w-[1320px] mx-auto px-6 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
            <div className="lg:col-span-8">
-              <div className="prose prose-invert max-w-none text-neutral-300">
+              <div className="text-neutral-300">
                 {srv.description ? (
-                  <div dangerouslySetInnerHTML={{ __html: srv.description.replace(/\n/g, '<br />') }} />
+                  <RichTextContent html={srv.description} />
                 ) : (
-                  <p className="text-neutral-500 font-light italic">No public technical specification available for this procedure yet.</p>
+                  <p className="text-neutral-500 font-light italic">No public technical overview available for this capacity yet.</p>
                 )}
               </div>
            </div>
            
            <div className="lg:col-span-4 space-y-6">
               <div className="bg-neutral-900/50 p-8 rounded-sm border border-neutral-800 shadow-xl glass">
-                 <h3 className="font-bold text-lg uppercase tracking-widest border-b border-neutral-800 pb-4 mb-6 text-white">Ingeniería Respaldo</h3>
+                 <h3 className="font-bold text-lg uppercase tracking-widest border-b border-neutral-800 pb-4 mb-6 text-white">Consultoría Técnica</h3>
                  
-                 <p className="text-xs text-neutral-500 font-light mb-4">Esta capacidad no cuenta con un dossier PDF público. Solicite especificaciones directas vía correo corporativo.</p>
+                 <p className="text-xs text-neutral-500 font-light mb-4">Por políticas de confidencialidad y privacidad comercial, no se exponen dossiers técnicos públicos. Solicite información directa vía correo corporativo.</p>
                  
                  <div className="mt-6 pt-6 border-t border-neutral-800">
                     <Link href="/contacto" className="block text-center w-full border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white font-bold py-3 px-4 transition-all uppercase tracking-wider text-sm rounded-sm">

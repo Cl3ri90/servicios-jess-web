@@ -6,11 +6,12 @@ type FooterProps = {
   phone: string | null;
   address: string | null;
   logoUrl?: string | null;
+  description?: string | null;
   devSignature?: string | null;
   devSignatureUrl?: string | null;
 };
 
-export function Footer({ brandName, email, phone, address, logoUrl, devSignature, devSignatureUrl }: FooterProps) {
+export function Footer({ brandName, email, phone, address, logoUrl, description, devSignature, devSignatureUrl }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -29,7 +30,7 @@ export function Footer({ brandName, email, phone, address, logoUrl, devSignature
                 <span className="text-xl font-bold tracking-[0.2em] text-white uppercase">{brandName || 'SERVICIOS JESS'}</span>
              </div>
              <p className="text-neutral-500 max-w-sm mb-8 leading-relaxed font-light">
-               Expertos en metalmecánica de precisión, ingeniería estructural e integración técnica para los sectores más exigentes de la industria nacional.
+               {description || 'Fabricantes de gomas industriales, plásticos de ingeniería y maestranza.'}
              </p>
           </div>
           

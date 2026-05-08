@@ -18,6 +18,8 @@ const ServiceSchema = z.object({
 
 export type ActionState = { success: boolean; message?: string; error?: string };
 
+import { sanitizeRichText } from '@/lib/security/sanitize-html';
+
 export async function upsertServiceCapability(prevState: any, formData: FormData): Promise<ActionState> {
   const canEdit = await checkOwnerEditableFlag('capacidades');
   if (!canEdit) return { success: false, error: 'Acción bloqueada. Modulo solo lectura.' };
@@ -25,7 +27,7 @@ export async function upsertServiceCapability(prevState: any, formData: FormData
   const rawData = {
     id: formData.get('id') || undefined,
     title: formData.get('title'),
-    description: formData.get('description'),
+    description: sanitizeRichText(formData.get('description') as string),
     shortDescription: formData.get('shortDescription'),
     imageUrl: formData.get('imageUrl') || '',
     iconName: formData.get('iconName') || '',
@@ -73,3 +75,41 @@ export async function deleteServiceCapability(id: string) {
     return { success: false, error: 'Error eliminando servicio' };
   }
 }
+
+const HeaderSchema = z.object({
+  title: z.string().min(2, 'Título muy corto').max(60),
+  introText: z.string().min(10, 'Texto muy corto').max(220),
+});
+
+export async function updateCapabilitiesHeader(prevState: any, formData: FormData): Promise<ActionState> {
+  const canEdit = await checkOwnerEditableFlag('capacidades');
+  if (!canEdit) return { success: false, error: 'Acción bloqueada. Modulo solo lectura.' };
+
+  const rawData = {
+    title: formData.get('title'),
+    introText: formData.get('introText'),
+  };
+
+  const valid = HeaderSchema.safeParse(rawData);
+  if (!valid.success) return { success: false, error: 'Validación fallida: ' + valid.error.issues[0].message };
+
+  try {
+    await prisma.siteConfig.update({
+      where: { id: 'singleton' },
+      data: {
+        capabilitiesTitle: valid.data.title,
+        capabilitiesIntroText: valid.data.introText,
+      },
+    });
+
+    revalidatePath('/');
+    revalidatePath('/servicios');
+    revalidatePath('/admin/owner/capacidades');
+    
+    return { success: true, message: 'Textos de sección actualizados.' };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: 'Error guardando textos de sección.' };
+  }
+}
+

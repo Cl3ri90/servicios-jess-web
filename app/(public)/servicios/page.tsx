@@ -1,7 +1,8 @@
-import Link from 'next/link';
+import React from 'react';
 import { getActiveServices } from '@/lib/site/get-services';
 import { getSiteConfig } from '@/lib/site/get-site-config';
 import type { Metadata } from 'next';
+import { DynamicIcon } from '@/components/shared/dynamic-icon';
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,7 @@ export default async function ServiciosPage() {
       <div className="max-w-[1320px] mx-auto px-6 pb-24">
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {servicios.map((srv) => (
-              <Link href={`/servicios`} key={srv.id} className="group bg-neutral-900 border border-neutral-800 rounded-sm overflow-hidden flex flex-col hover:border-[var(--color-primary)]/50 transition-colors glass">
+              <div key={srv.id} className="group bg-neutral-900 border border-neutral-800 rounded-sm overflow-hidden flex flex-col hover:border-[var(--color-primary)]/50 transition-colors glass">
                 <div className="aspect-video relative bg-neutral-950 overflow-hidden mix-blend-luminosity hover:mix-blend-normal transition-all duration-500">
                   {srv.imageUrl ? (
                     <img src={srv.imageUrl} alt={srv.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter grayscale contrast-125 brightness-75 group-hover:brightness-100 group-hover:grayscale-0" />
@@ -46,13 +47,14 @@ export default async function ServiciosPage() {
                     </div>
                   )}
                   {srv.iconName && (
-                    <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-sm border border-neutral-700 text-neutral-400 p-2 rounded w-10 h-10 flex flex-col justify-center items-center">
-                       <span className="font-mono text-xs">{srv.iconName.slice(0,2).toUpperCase()}</span>
+                    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm border border-neutral-700 text-[var(--color-primary)] p-2 rounded-sm w-10 h-10 flex flex-col justify-center items-center">
+                       <DynamicIcon 
+                        icon={srv.iconName} 
+                        className="w-6 h-6" 
+                        colorMode={srv.iconName.includes(':') && !srv.iconName.startsWith('lucide:') && !srv.iconName.startsWith('mdi:') ? 'native' : 'mono'}
+                       />
                     </div>
                   )}
-                  <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-sm border border-neutral-700 text-xs px-2 py-1 uppercase tracking-widest text-[var(--color-primary)] font-semibold">
-                    TECH-SPEC
-                  </div>
                 </div>
                 <div className="p-8 flex flex-col flex-1 text-left">
                   <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[var(--color-primary)] transition-colors">
@@ -61,11 +63,8 @@ export default async function ServiciosPage() {
                   <p className="text-neutral-400 text-sm font-light leading-relaxed mb-6">
                     {srv.shortDescription || 'Requerimiento técnico personalizado.'}
                   </p>
-                  <div className="flex items-center text-[var(--color-primary)] font-semibold uppercase text-xs tracking-wider gap-2 mt-auto hover:gap-3 transition-all">
-                    Ver Especificación <span className="text-lg">→</span>
-                  </div>
                 </div>
-              </Link>
+              </div>
             ))}
             {servicios.length === 0 && (
               <div className="col-span-12 text-center py-24 text-neutral-500 font-light border border-dashed border-neutral-800 rounded-sm">

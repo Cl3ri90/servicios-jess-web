@@ -5,6 +5,8 @@ import { Footer } from '@/components/site/footer';
 import { FloatingCTAWrapper } from '@/components/site/floating-cta';
 import { MainCtaWrapper } from '@/components/site/main-cta-wrapper';
 import { Inter } from 'next/font/google';
+import { Suspense } from 'react';
+import { AnalyticsTracker } from '@/components/site/analytics-tracker';
 import '@/app/globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -37,6 +39,9 @@ export default async function PublicLayout({ children }: { children: React.React
         logoUrl={config?.logoUrl}
         activeFlags={activeFlags} 
       />
+      <Suspense fallback={null}>
+        <AnalyticsTracker />
+      </Suspense>
       <main className="flex-1 pt-0">
         {children}
       </main>
@@ -48,6 +53,7 @@ export default async function PublicLayout({ children }: { children: React.React
         phone={config?.contactPhone || null}
         address={config?.contactAddress || null}
         logoUrl={config?.logoUrl}
+        description={config?.footerText}
         devSignature={config?.devSignature}
         devSignatureUrl={config?.devSignatureUrl}
       />

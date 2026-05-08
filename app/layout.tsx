@@ -3,10 +3,15 @@ import '@/app/globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
-export const metadata = {
-  title: 'Servicios Jess SpA',
-  description: 'Maestranza Avanzada y Servicios Industriales',
-};
+import { getSiteConfig } from '@/lib/site/get-site-config';
+
+export async function generateMetadata() {
+  const { config } = await getSiteConfig();
+  return {
+    title: config?.metaTitle || config?.name || 'Servicios Jess SpA',
+    description: config?.metaDescription || 'Maestranza Avanzada y Servicios Industriales',
+  };
+}
 
 export default function RootLayout({
   children,

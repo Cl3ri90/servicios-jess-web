@@ -68,6 +68,9 @@ model SiteConfig {
   showMetrics       Boolean  @default(true)
   showIndustrialCTA Boolean  @default(true)
 
+  capabilitiesTitle     String?  @default("Capacidades Técnicas")
+  capabilitiesIntroText String?  @default("Infraestructura tecnológica y experiencia humana para fabricar componentes, estructuras y soluciones metalmecánicas críticas.")
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -328,3 +331,38 @@ model MainCtaConfig {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
+
+model SiteVisit {
+  id        String   @id @default(uuid())
+  sessionId String
+  path      String
+  referrer  String?
+  userAgent String?
+  device    String?
+  browser   String?
+  os        String?
+  country   String?
+  city      String?
+  eventType String   @default("page_view")
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
+  @@index([sessionId])
+}
+
+model SiteEvent {
+  id        String   @id @default(uuid())
+  sessionId String?
+  type      String
+  label     String?
+  path      String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([type])
+  @@index([path])
+  @@index([sessionId])
+}
+

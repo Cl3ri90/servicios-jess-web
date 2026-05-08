@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ServiceCapabilityForm } from '@/components/admin/service-capability-form';
+import { CapabilitiesHeaderForm } from '@/components/admin/capabilities-header-form';
+import { getSiteConfig } from '@/lib/site/get-site-config';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +14,8 @@ export default async function CapacidadesOwnerPage(props: {
   const searchParams = await props.searchParams;
   const { flag } = await checkOwnerAccess('capacidades');
   if (!flag) notFound();
+
+  const { config } = await getSiteConfig();
 
   const services = await prisma.serviceCapability.findMany({
     orderBy: { order: 'asc' }
@@ -36,6 +40,18 @@ export default async function CapacidadesOwnerPage(props: {
       </div>
 
       <div className="flex flex-col gap-y-12 max-w-full overflow-hidden">
+        {/* SECCIÓN GLOBAL: TEXTOS DE SECCIÓN */}
+        {flag.ownerEditable && (
+          <CapabilitiesHeaderForm 
+            initialData={{
+              title: config?.capabilitiesTitle || 'Capacidades Técnicas',
+              introText: config?.capabilitiesIntroText || 'Infraestructura tecnológica y experiencia humana para fabricar componentes, estructuras y soluciones metalmecánicas críticas.'
+            }} 
+          />
+        )}
+
+        <hr className="border-zinc-800" />
+
         {/* SECCIÓN SUPERIOR: EDITOR */}
         {flag.ownerEditable && (
           <div id="editor-section" className="w-full min-w-0">

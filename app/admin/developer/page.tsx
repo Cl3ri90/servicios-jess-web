@@ -1,7 +1,9 @@
 import { validateAdminAccess } from '@/lib/admin/permissions';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db/prisma';
 import Link from 'next/link';
 import * as Icons from 'lucide-react';
+import { getDashboardAnalytics } from '@/lib/analytics/get-dashboard-analytics';
+import { AnalyticsDashboard } from '@/components/admin/analytics-dashboard';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +16,8 @@ export default async function DeveloperDashboard() {
     portTotal, portActive,
     sheetTotal, sheetActive,
     leadTotal, flagTotal, flagActive, flagOwner, flagPublic,
-    siteConfig, ctaConfig, latestFlags
+    siteConfig, ctaConfig, latestFlags,
+    analyticsData
   ] = await Promise.all([
     prisma.serviceCapability.count(),
     prisma.serviceCapability.count({ where: { isActive: true } }),
@@ -32,7 +35,8 @@ export default async function DeveloperDashboard() {
     prisma.featureFlag.findMany({ 
       orderBy: { updatedAt: 'desc' }, 
       take: 5 
-    })
+    }),
+    getDashboardAnalytics()
   ]);
 
   const MetricCard = ({ title, value, sub, icon: Icon, color }: any) => (
@@ -129,11 +133,7 @@ export default async function DeveloperDashboard() {
               <h2 className="text-sm font-black text-white uppercase mb-4 tracking-widest border-b border-zinc-800 pb-2 flex items-center gap-2">
                  <Icons.BarChart3 className="w-4 h-4" /> Analítica del Sitio
               </h2>
-              <div className="border border-dashed border-zinc-800 p-12 rounded-2xl flex flex-col items-center justify-center text-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-zinc-950/50">
-                 <Icons.Radar className="w-10 h-10 text-zinc-700 animate-pulse mb-4" />
-                 <p className="text-zinc-300 font-bold mb-1">Analítica pendiente de integración</p>
-                 <p className="text-xs text-zinc-500 max-w-sm">No hay tracking de Pageviews, Usuarios Únicos o Tasas de Conversión conectados con Prisma aún. Extensión planificada.</p>
-              </div>
+              <AnalyticsDashboard data={analyticsData} />
             </section>
          </div>
 

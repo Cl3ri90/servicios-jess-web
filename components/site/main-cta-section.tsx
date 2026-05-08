@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { trackEvent } from '@/lib/analytics/track-event';
 
 export function MainCtaSection({ config }: { config: any }) {
   if (!config || config.isEnabled === false) return null;
@@ -17,6 +20,14 @@ export function MainCtaSection({ config }: { config: any }) {
     overlayOpacity,
     alignment,
   } = config;
+
+  const handleTrack = () => {
+    trackEvent({
+      type: 'main_cta_click',
+      label: buttonText,
+      metadata: { href: buttonUrl }
+    });
+  };
 
   const isLeftAlign = alignment === 'left';
   const overlayValue = overlayOpacity !== undefined ? overlayOpacity / 100 : 0.8;
@@ -77,6 +88,7 @@ export function MainCtaSection({ config }: { config: any }) {
 
         <Link
           href={buttonUrl}
+          onClick={handleTrack}
           className="inline-flex h-14 items-center justify-center font-black text-sm tracking-widest uppercase rounded-sm transition-all duration-300 px-10 md:px-12 w-full md:w-auto"
           style={{ 
             backgroundColor: accentColor, 

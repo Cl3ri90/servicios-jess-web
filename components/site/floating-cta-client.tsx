@@ -1,6 +1,5 @@
-'use client';
-
-import * as LucideIcons from 'lucide-react';
+import { DynamicIcon } from '@/components/shared/dynamic-icon';
+import { trackEvent } from '@/lib/analytics/track-event';
 import Link from 'next/link';
 
 interface CTAConfig {
@@ -14,7 +13,14 @@ interface CTAConfig {
 }
 
 export function FloatingCTAClient({ config, isPreview = false }: { config: CTAConfig, isPreview?: boolean }) {
-  const Icon = config.iconName ? (LucideIcons as any)[config.iconName] : null;
+  const handleTrack = () => {
+    if (isPreview) return;
+    trackEvent({
+      type: 'floating_cta_click',
+      label: config.label,
+      metadata: { href: config.href }
+    });
+  };
 
   // Determinar clases de posición (Tailwind CSS)
   let posClasses = "bottom-4 right-4";
@@ -30,6 +36,8 @@ export function FloatingCTAClient({ config, isPreview = false }: { config: CTACo
 
   const positionType = isPreview ? "absolute" : "fixed";
 
+  const isNative = config.iconName?.includes(':') && !config.iconName?.startsWith('lucide:') && !config.iconName?.startsWith('mdi:');
+
   return (
     <div className={`${positionType} z-[999] transition-all duration-300 transform hover:scale-105 ${posClasses}`}>
       {isExternal ? (
@@ -37,20 +45,34 @@ export function FloatingCTAClient({ config, isPreview = false }: { config: CTACo
           href={config.href} 
           target={target} 
           rel={rel}
+          onClick={handleTrack}
           className="flex items-center gap-3 px-5 py-3 rounded-full shadow-2xl backdrop-blur-sm border border-white/10 group cursor-pointer"
           style={{ backgroundColor: config.backgroundColor, color: config.textColor }}
         >
-           {Icon && <Icon className="w-5 h-5 group-hover:animate-pulse" />}
+           {config.iconName && (
+             <DynamicIcon 
+              icon={config.iconName} 
+              className="w-5 h-5 group-hover:animate-pulse" 
+              colorMode={isNative ? 'native' : 'mono'}
+             />
+           )}
            <span className="font-semibold tracking-wide text-sm">{config.label}</span>
         </a>
       ) : (
         <Link 
           href={config.href} 
           target={target}
+          onClick={handleTrack}
           className="flex items-center gap-3 px-5 py-3 rounded-full shadow-2xl backdrop-blur-sm border border-white/10 group"
           style={{ backgroundColor: config.backgroundColor, color: config.textColor }}
         >
-           {Icon && <Icon className="w-5 h-5 group-hover:animate-pulse" />}
+           {config.iconName && (
+             <DynamicIcon 
+              icon={config.iconName} 
+              className="w-5 h-5 group-hover:animate-pulse" 
+              colorMode={isNative ? 'native' : 'mono'}
+             />
+           )}
            <span className="font-semibold tracking-wide text-sm">{config.label}</span>
         </Link>
       )}

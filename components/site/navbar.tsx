@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { trackEvent } from '@/lib/analytics/track-event';
 
 type NavbarProps = {
   brandName: string;
@@ -83,6 +84,7 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
           <div className="hidden md:flex flex-row items-center gap-4">
             <Link 
               href="/contacto" 
+              onClick={() => trackEvent({ type: 'cta_click', label: 'INICIAR PROYECTO', metadata: { component: 'navbar' } })}
               className="h-10 px-6 bg-[var(--color-accent)] text-white font-black text-[11px] uppercase tracking-[0.22em] hover:bg-[var(--color-accent-hover)] transition-colors rounded-sm flex items-center justify-center"
             >
               INICIAR PROYECTO
@@ -130,7 +132,10 @@ export function Navbar({ brandName, logoUrl, activeFlags }: NavbarProps) {
             })}
             <Link 
               href="/contacto" 
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+                trackEvent({ type: 'cta_click', label: 'INICIAR PROYECTO', metadata: { component: 'mobile_navbar' } });
+              }}
               className="mt-6 h-14 w-full bg-[#ea580c] text-white font-black text-sm uppercase tracking-[0.22em] hover:bg-orange-600 transition-colors rounded-sm flex items-center justify-center shadow-lg"
             >
               INICIAR PROYECTO

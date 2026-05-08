@@ -26,7 +26,11 @@ export default async function PublicHomePage() {
       )}
 
       {activeFlags.includes('capacidades') && (
-        <ServicesSection services={services} />
+        <ServicesSection 
+          services={services} 
+          title={config?.capabilitiesTitle || undefined}
+          introText={config?.capabilitiesIntroText || undefined}
+        />
       )}
     </div>
   );

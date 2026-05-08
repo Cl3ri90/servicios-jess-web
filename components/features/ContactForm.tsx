@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { usePathname } from 'next/navigation';
 import { createContactLead } from '@/lib/actions/contact-leads';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics/track-event';
 
 export function ContactForm() {
   const pathname = usePathname();
@@ -16,6 +17,16 @@ export function ContactForm() {
       const result = await createContactLead(formData);
       setState(result);
       if (result.success) {
+        // Track event
+        trackEvent({
+          type: 'contact_form_submit',
+          label: 'Formulario de contacto',
+          metadata: { 
+            source: formData.get('source') as string,
+            success: true 
+          }
+        });
+
         // Podríamos limpiar el formulario aquí si queremos
         const form = document.getElementById('public-contact-form') as HTMLFormElement;
         if (form) form.reset();

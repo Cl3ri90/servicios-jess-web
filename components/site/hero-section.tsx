@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { trackEvent } from '@/lib/analytics/track-event';
 
 type HeroProps = {
   title: string;
@@ -72,6 +73,7 @@ export function HeroSection({
             {btnText && (
               <Link 
                 href={btnLink || '/'} 
+                onClick={() => trackEvent({ type: 'cta_click', label: btnText, metadata: { href: btnLink } })}
                 className="bg-[#ea580c] hover:bg-orange-600 text-white px-8 py-4 min-h-[44px] flex items-center justify-center font-bold rounded-sm shadow-[0_0_20px_rgba(234,88,12,0.4)] transition-all hover:shadow-[0_0_25px_rgba(234,88,12,0.6)] text-sm uppercase tracking-widest w-full sm:w-auto"
               >
                 {btnText}
@@ -81,6 +83,7 @@ export function HeroSection({
             {secBtnText && (
               <Link 
                 href={secBtnLink || '/'} 
+                onClick={() => trackEvent({ type: 'cta_click', label: secBtnText, metadata: { href: secBtnLink } })}
                 className="bg-transparent border border-neutral-600 hover:border-neutral-400 text-white px-8 py-4 min-h-[44px] flex items-center justify-center font-bold rounded-sm transition-colors text-sm uppercase tracking-widest w-full sm:w-auto glass"
               >
                 {secBtnText}

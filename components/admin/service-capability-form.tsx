@@ -28,6 +28,8 @@ interface CapabilityFormProps {
 import { LivePreviewShell } from '@/components/admin/live-preview-shell';
 import { DirtySaveBtn } from '@/components/admin/dirty-save-btn';
 import { IndustrialCard } from '@/components/site/industrial-card';
+import { RichTextEditor } from './rich-text-editor';
+import { RichTextContent } from '@/components/shared/rich-text-content';
 
 export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityFormProps) {
   const [icon, setIcon] = useState(initialData?.iconName || '');
@@ -163,13 +165,12 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
         </div>
 
         <div className="grid gap-2">
-          <Label className="text-zinc-400">Descripción Detallada</Label>
-          <textarea 
-            name="description" 
+          <Label className="text-zinc-400">Descripción Detallada (Enriquecida)</Label>
+          <input type="hidden" name="description" value={formState.description} />
+          <RichTextEditor 
             value={formState.description}
-            onChange={handleChange}
-            required 
-            className="flex min-h-[80px] w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-orange-500"
+            onChange={(val) => setFormState(prev => ({ ...prev, description: val }))}
+            placeholder="Describe detalladamente esta capacidad técnica..."
           />
         </div>
         
@@ -246,16 +247,20 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
       <div className="min-w-0 lg:sticky lg:top-24">
         <LivePreviewShell title="Sandbox: Ficha de Capacidad" className="mb-0">
            <div className="p-6 bg-zinc-950 flex justify-center min-h-[450px]">
-             <div className="w-full max-w-[320px]">
+            <div className="flex flex-col gap-6 w-full max-w-[320px]">
                <IndustrialCard 
                  id="preview"
                  title={formState.title || 'Título Capacidad'}
                  description={formState.shortDescription || 'Breve descripción de la capacidad...'}
-                 code={`S-${String(initialData?.order || 1).padStart(2, '0')}`}
                  imageUrl={formState.imageUrl}
+                 iconName={icon}
                  href="#"
                />
-             </div>
+               <div className="p-4 bg-zinc-900/50 border border-zinc-800 rounded-sm">
+                 <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-3 border-b border-zinc-800 pb-1">Contenido Expandido (Vista Admin)</p>
+                 <RichTextContent html={formState.description} className="prose-sm" />
+               </div>
+            </div>
            </div>
         </LivePreviewShell>
       </div>

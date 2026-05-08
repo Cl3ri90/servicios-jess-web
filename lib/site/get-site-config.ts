@@ -23,6 +23,9 @@ export const getSiteConfig = unstable_cache(
       contactPhone: config?.contactPhone || '+56 9 1234 5678',
       devSignature: config?.devSignature || 'Diseñado y Desarrollado por DuetSolutions',
       devSignatureUrl: config?.devSignatureUrl || 'https://duetsolutions.cl',
+      footerText: config?.footerText || 'Fabricantes de gomas industriales, plásticos de ingeniería y maestranza.',
+      capabilitiesTitle: config?.capabilitiesTitle || 'Capacidades Técnicas',
+      capabilitiesIntroText: config?.capabilitiesIntroText || 'Infraestructura tecnológica y experiencia humana para fabricar componentes, estructuras y soluciones metalmecánicas críticas.',
     };
 
     return {
