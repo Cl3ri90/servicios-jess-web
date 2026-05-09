@@ -13,6 +13,50 @@ enum Role {
   DEVELOPER
 }
 
+enum LeadStatus {
+  NEW
+  OPEN
+  IN_PROGRESS
+  ATTEMPTED_CONTACT
+  CONTACTED
+  QUALIFIED
+  QUOTED
+  WON
+  LOST
+  ARCHIVED
+}
+
+enum LeadPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum LeadPipelineStage {
+  INBOX
+  CONTACT
+  QUALIFICATION
+  QUOTATION
+  WON
+  LOST
+}
+
+enum LeadActivityType {
+  CREATED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+  STAGE_CHANGED
+  NOTE_ADDED
+  FOLLOW_UP_SET
+  CONTACTED
+  QUOTED
+  WON
+  LOST
+  ARCHIVED
+  RESTORED
+}
+
 model User {
   id        String   @id @default(uuid())
   authId          String   @unique
@@ -182,11 +226,27 @@ model Lead {
   phone              String?
   company            String?
   message            String    @db.Text
-  status             String    @default("NEW")
-  priority           String    @default("NORMAL")
+  
+  status             LeadStatus @default(NEW)
+  priority           LeadPriority @default(NORMAL)
+  pipelineStage      LeadPipelineStage @default(INBOX)
+  
   source             String    @default("web")
   pageUrl            String?
   internalNote       String?   @db.Text
+  
+  score              Int       @default(0)
+  estimatedValue     Int?
+  currency           String?   @default("CLP")
+  
+  nextFollowUpAt     DateTime?
+  lastContactedAt    DateTime?
+  closedAt           DateTime?
+  lostReason         String?
+  
+  isArchived         Boolean   @default(false)
+  archivedAt         DateTime?
+
   userAgent          String?
   ipAddress          String?
   emailStatus        String    @default("pending")
@@ -195,6 +255,51 @@ model Lead {
   repliedAt          DateTime?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
+
+  activities         LeadActivity[]
+  emails             LeadEmail[]
+}
+
+model LeadEmail {
+  id          String   @id @default(uuid())
+  leadId      String
+  direction   String   @default("OUTBOUND")
+  subject     String
+  body        String   @db.Text
+  toEmail     String
+  fromEmail   String?
+  replyTo     String?
+  resendId    String?
+  status      String   @default("PENDING")
+  error       String?  @db.Text
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  openedAt    DateTime?
+  bouncedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lead        Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@index([createdAt])
+  @@index([status])
+  @@index([resendId])
+}
+
+model LeadActivity {
+  id        String           @id @default(uuid())
+  leadId    String
+  type      LeadActivityType
+  title     String
+  note      String?          @db.Text
+  createdBy String?
+  createdAt DateTime         @default(now())
+
+  lead      Lead             @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@index([createdAt])
 }
 
 model CompanyInfo {

@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { headers } from 'next/headers'
 import { notifyNewLeadCreated } from '@/lib/email/lead-notifications'
 import { validateAdminAccess } from '@/lib/admin/permissions'
+import { LeadStatus, LeadPriority, LeadPipelineStage, LeadActivityType } from '@prisma/client'
 
 const contactLeadSchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(80, "El nombre es muy largo"),
@@ -17,14 +18,39 @@ const contactLeadSchema = z.object({
   source: z.string().default('contact_form'),
 })
 
+// Calculate basic score
+function calculateLeadScore(data: any) {
+  let score = 0;
+  if (data.company && data.company.trim() !== '') score += 20;
+  if (data.phone && data.phone.trim() !== '') score += 15;
+  if (data.message && data.message.length > 80) score += 15;
+  
+  const source = data.source || '';
+  if (source.includes('contact_form') || source.includes('cta')) score += 20;
+
+  const keywords = ['cotización', 'cotizacion', 'fabricar', 'urgente', 'proyecto', 'estructura', 'goma', 'plástico', 'plastico', 'maestranza', 'mecanizado'];
+  const msgLower = (data.message || '').toLowerCase();
+  
+  for (const kw of keywords) {
+    if (msgLower.includes(kw)) {
+      score += 10;
+      break; // apply once
+    }
+  }
+
+  return score;
+}
+
+function determineInitialPriority(score: number): LeadPriority {
+  if (score >= 85) return 'URGENT';
+  if (score >= 60) return 'HIGH';
+  return 'NORMAL';
+}
+
 export async function createContactLead(formData: FormData) {
   try {
-    // 1. Honeypot check
     const website = formData.get('website');
-    if (website) {
-      // Si el honeypot viene lleno, es un bot. Retornamos éxito silencioso.
-      return { success: true, message: 'Su mensaje ha sido enviado exitosamente.' };
-    }
+    if (website) return { success: true, message: 'Su mensaje ha sido enviado exitosamente.' };
 
     const rawData = {
       name: formData.get('name') as string,
@@ -37,43 +63,30 @@ export async function createContactLead(formData: FormData) {
     }
 
     const { success, data, error } = contactLeadSchema.safeParse(rawData)
+    if (!success) return { success: false, error: 'Datos de formulario inválidos.' }
 
-    if (!success) {
-      return { success: false, error: 'Datos de formulario inválidos. Por favor revisa los campos requeridos.' }
-    }
-
-    // 2. Extraer Headers
     const headersList = await headers();
     const ipAddress = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown';
     const userAgent = headersList.get('user-agent') || 'unknown';
 
-    // 3. Rate Limiting Básico
-    // Bloquearemos si hay más de 3 leads en los últimos 10 minutos con el mismo email o IP.
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
-    
-    // FUTURE RATE LIMITING
-    // Para producción con mayor tráfico, integrar Upstash Redis, Vercel KV o un servicio equivalente para rate limiting por IP/email.
-
     const recentLeadsCount = await prisma.lead.count({
       where: {
         OR: [
           { email: data.email },
           { ipAddress: ipAddress !== 'unknown' ? ipAddress : undefined }
         ],
-        createdAt: {
-          gte: tenMinutesAgo
-        }
+        createdAt: { gte: tenMinutesAgo }
       }
     });
 
     if (recentLeadsCount >= 3) {
-      return {
-        success: false,
-        error: "Hemos recibido varias solicitudes recientes. Intenta nuevamente más tarde.",
-      };
+      return { success: false, error: "Hemos recibido varias solicitudes recientes. Intenta nuevamente más tarde." };
     }
 
-    // 4. Guardar Lead
+    const score = calculateLeadScore(data);
+    const priority = determineInitialPriority(score);
+
     const newLead = await prisma.lead.create({
       data: {
         name: data.name,
@@ -84,19 +97,42 @@ export async function createContactLead(formData: FormData) {
         pageUrl: data.pageUrl,
         source: data.source,
         status: 'NEW',
-        priority: 'NORMAL',
+        priority: priority,
+        pipelineStage: 'INBOX',
+        score: score,
         userAgent,
         ipAddress,
+        activities: {
+          create: {
+            type: 'CREATED',
+            title: 'Lead ingresado',
+            note: `Score inicial: ${score} - Prioridad: ${priority}`
+          }
+        }
       }
     });
 
-    // 5. Notificación futura
-    await notifyNewLeadCreated(newLead);
+    // 5. Send automated emails isolated from main flow
+    try {
+      const { sendLeadConfirmationEmail, sendInternalNewLeadNotification } = await import('@/lib/email/lead-emails');
+      
+      try {
+        await sendLeadConfirmationEmail(newLead);
+      } catch (e) {
+        console.error("Lead confirmation email failed", e);
+      }
 
-    // 6. Revalidar
+      try {
+        await sendInternalNewLeadNotification(newLead);
+      } catch (e) {
+        console.error("Internal lead notification failed", e);
+      }
+    } catch (e) {
+      console.error("Could not load email service module", e);
+    }
+
     revalidatePath('/admin/developer/leads');
     revalidatePath('/admin/owner/leads');
-
     return { success: true, message: 'Solicitud enviada correctamente. Nuestro equipo se pondrá en contacto contigo.' }
   } catch (error) {
     console.error('Lead Error:', error)
@@ -104,69 +140,249 @@ export async function createContactLead(formData: FormData) {
   }
 }
 
-export async function getContactLeads() {
-  await validateAdminAccess("DEVELOPER"); // o validación custom si ambos roles pueden ver
+// CRM Actions
+export async function getLeadsCRM(filters?: any) {
+  await validateAdminAccess("DEVELOPER");
+  
+  const whereClause: any = {};
+  
+  if (filters?.isArchived !== undefined) {
+    whereClause.isArchived = filters.isArchived;
+  } else {
+    whereClause.isArchived = false;
+  }
+  
+  if (filters?.status) whereClause.status = filters.status;
+  if (filters?.priority) whereClause.priority = filters.priority;
+  if (filters?.pipelineStage) whereClause.pipelineStage = filters.pipelineStage;
+  if (filters?.search) {
+    whereClause.OR = [
+      { name: { contains: filters.search, mode: 'insensitive' } },
+      { email: { contains: filters.search, mode: 'insensitive' } },
+      { company: { contains: filters.search, mode: 'insensitive' } },
+    ];
+  }
+  if (filters?.overdueFollowUp) {
+    whereClause.nextFollowUpAt = { lt: new Date() };
+  }
+
   return prisma.lead.findMany({
-    orderBy: { createdAt: 'desc' }
+    where: whereClause,
+    orderBy: [
+      { priority: 'desc' },
+      { createdAt: 'desc' }
+    ]
   });
 }
 
-export async function updateContactLeadStatus(id: string, newStatus: string) {
-  try {
-    await validateAdminAccess("OWNER");
-    await prisma.lead.update({
-      where: { id },
-      data: { status: newStatus }
-    });
-    revalidatePath('/admin/developer/leads');
-    revalidatePath('/admin/owner/leads');
-    return { success: true, message: 'Estado actualizado' }
-  } catch (error) {
-    return { success: false, error: 'Error actualizando estado' }
-  }
+export async function getLeadById(id: string) {
+  await validateAdminAccess("DEVELOPER");
+  return prisma.lead.findUnique({
+    where: { id },
+    include: {
+      activities: {
+        orderBy: { createdAt: 'desc' }
+      },
+      emails: {
+        orderBy: { createdAt: 'desc' }
+      }
+    }
+  });
 }
 
-export async function updateContactLeadPriority(id: string, priority: string) {
-  try {
-    await validateAdminAccess("OWNER");
-    await prisma.lead.update({
-      where: { id },
-      data: { priority }
-    });
-    revalidatePath('/admin/developer/leads');
-    revalidatePath('/admin/owner/leads');
-    return { success: true, message: 'Prioridad actualizada' }
-  } catch (error) {
-    return { success: false, error: 'Error actualizando prioridad' }
+export async function updateLeadStatus(id: string, newStatus: LeadStatus, extraData?: { estimatedValue?: number, lostReason?: string }) {
+  await validateAdminAccess("OWNER");
+  
+  const dataToUpdate: any = { status: newStatus };
+  const activityNote = [];
+  
+  if (newStatus === 'WON') {
+    dataToUpdate.closedAt = new Date();
+    dataToUpdate.pipelineStage = 'WON';
+    if (extraData?.estimatedValue) {
+      dataToUpdate.estimatedValue = extraData.estimatedValue;
+      activityNote.push(`Valor estimado: $${extraData.estimatedValue}`);
+    }
+  } else if (newStatus === 'LOST') {
+    dataToUpdate.closedAt = new Date();
+    dataToUpdate.pipelineStage = 'LOST';
+    if (extraData?.lostReason) {
+      dataToUpdate.lostReason = extraData.lostReason;
+      activityNote.push(`Razón de pérdida: ${extraData.lostReason}`);
+    }
   }
+
+  await prisma.lead.update({
+    where: { id },
+    data: {
+      ...dataToUpdate,
+      activities: {
+        create: {
+          type: 'STATUS_CHANGED',
+          title: `Estado cambiado a ${newStatus}`,
+          note: activityNote.join(' | ') || null
+        }
+      }
+    }
+  });
+
+  revalidatePath('/admin/developer/leads');
+  revalidatePath('/admin/owner/leads');
+  return { success: true };
 }
 
-export async function updateContactLeadNote(id: string, internalNote: string) {
-  try {
-    await validateAdminAccess("OWNER");
-    await prisma.lead.update({
-      where: { id },
-      data: { internalNote }
-    });
-    revalidatePath('/admin/developer/leads');
-    revalidatePath('/admin/owner/leads');
-    return { success: true, message: 'Nota interna actualizada' }
-  } catch (error) {
-    return { success: false, error: 'Error actualizando nota' }
-  }
+export async function updateLeadPriority(id: string, priority: LeadPriority) {
+  await validateAdminAccess("OWNER");
+  await prisma.lead.update({
+    where: { id },
+    data: { 
+      priority,
+      activities: {
+        create: {
+          type: 'PRIORITY_CHANGED',
+          title: `Prioridad cambiada a ${priority}`
+        }
+      }
+    }
+  });
+  revalidatePath('/admin/developer/leads');
+  revalidatePath('/admin/owner/leads');
+  return { success: true };
 }
 
-export async function archiveContactLead(id: string) {
-  try {
-    await validateAdminAccess("OWNER");
-    await prisma.lead.update({
-      where: { id },
-      data: { status: 'ARCHIVED' }
-    });
-    revalidatePath('/admin/developer/leads');
-    revalidatePath('/admin/owner/leads');
-    return { success: true, message: 'Lead archivado' }
-  } catch (error) {
-    return { success: false, error: 'Error archivando lead' }
+export async function updateLeadPipelineStage(id: string, pipelineStage: LeadPipelineStage, extraData?: { estimatedValue?: number, lostReason?: string }) {
+  await validateAdminAccess("OWNER");
+
+  const dataToUpdate: any = { pipelineStage };
+  const activityNote = [];
+
+  if (pipelineStage === 'WON') {
+    dataToUpdate.status = 'WON';
+    dataToUpdate.closedAt = new Date();
+    if (extraData?.estimatedValue) {
+      dataToUpdate.estimatedValue = extraData.estimatedValue;
+      activityNote.push(`Valor estimado: $${extraData.estimatedValue}`);
+    }
+  } else if (pipelineStage === 'LOST') {
+    dataToUpdate.status = 'LOST';
+    dataToUpdate.closedAt = new Date();
+    if (extraData?.lostReason) {
+      dataToUpdate.lostReason = extraData.lostReason;
+      activityNote.push(`Razón de pérdida: ${extraData.lostReason}`);
+    }
   }
+
+  await prisma.lead.update({
+    where: { id },
+    data: {
+      ...dataToUpdate,
+      activities: {
+        create: {
+          type: 'STAGE_CHANGED',
+          title: `Etapa cambiada a ${pipelineStage}`,
+          note: activityNote.join(' | ') || null
+        }
+      }
+    }
+  });
+
+  revalidatePath('/admin/developer/leads');
+  revalidatePath('/admin/owner/leads');
+  return { success: true };
+}
+
+export async function updateLeadNote(id: string, internalNote: string) {
+  await validateAdminAccess("OWNER");
+  await prisma.lead.update({
+    where: { id },
+    data: { 
+      internalNote,
+      activities: {
+        create: {
+          type: 'NOTE_ADDED',
+          title: `Nota interna actualizada`,
+          note: internalNote
+        }
+      }
+    }
+  });
+  revalidatePath('/admin/developer/leads');
+  revalidatePath('/admin/owner/leads');
+  return { success: true };
+}
+
+export async function addLeadActivity(id: string, type: LeadActivityType, title: string, note?: string) {
+  await validateAdminAccess("OWNER");
+  await prisma.leadActivity.create({
+    data: {
+      leadId: id,
+      type,
+      title,
+      note
+    }
+  });
+  revalidatePath('/admin/developer/leads');
+  revalidatePath('/admin/owner/leads');
+  return { success: true };
+}
+
+export async function setLeadFollowUp(id: string, nextFollowUpAt: Date | null) {
+  await validateAdminAccess("OWNER");
+  await prisma.lead.update({
+    where: { id },
+    data: {
+      nextFollowUpAt,
+      activities: {
+        create: {
+          type: 'FOLLOW_UP_SET',
+          title: nextFollowUpAt ? `Seguimiento programado para ${nextFollowUpAt.toLocaleDateString()}` : `Seguimiento cancelado`
+        }
+      }
+    }
+  });
+  revalidatePath('/admin/developer/leads');
+  revalidatePath('/admin/owner/leads');
+  return { success: true };
+}
+
+export async function archiveLead(id: string) {
+  await validateAdminAccess("OWNER");
+  await prisma.lead.update({
+    where: { id },
+    data: { 
+      isArchived: true,
+      archivedAt: new Date(),
+      status: 'ARCHIVED',
+      activities: {
+        create: {
+          type: 'ARCHIVED',
+          title: 'Lead archivado'
+        }
+      }
+    }
+  });
+  revalidatePath('/admin/developer/leads');
+  revalidatePath('/admin/owner/leads');
+  return { success: true };
+}
+
+export async function restoreLead(id: string) {
+  await validateAdminAccess("OWNER");
+  await prisma.lead.update({
+    where: { id },
+    data: { 
+      isArchived: false,
+      archivedAt: null,
+      status: 'OPEN',
+      activities: {
+        create: {
+          type: 'RESTORED',
+          title: 'Lead restaurado'
+        }
+      }
+    }
+  });
+  revalidatePath('/admin/developer/leads');
+  revalidatePath('/admin/owner/leads');
+  return { success: true };
 }
