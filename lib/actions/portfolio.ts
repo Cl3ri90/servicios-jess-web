@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { uploadPublicFile } from '@/lib/supabase/storage'
 import { validateAdminAccess } from '@/lib/admin/permissions'
+import { sanitizeRichText } from '@/lib/security/sanitize-html'
 
 const portfolioSchema = z.object({
   title: z.string().min(3, "El título debe tener al menos 3 caracteres"),
@@ -15,6 +16,16 @@ const portfolioSchema = z.object({
   material: z.string().nullable().optional(),
   specs: z.string().nullable().optional(),
   order: z.coerce.number().default(0),
+  pieceType: z.string().nullable().optional(),
+  shortDescription: z.string().nullable().optional(),
+  richDescription: z.string().nullable().optional(),
+  showClientName: z.boolean().default(false),
+  publicClientName: z.string().nullable().optional(),
+  internalNotes: z.string().nullable().optional(),
+  isPublished: z.boolean().default(true),
+  isFeatured: z.boolean().default(false),
+  sortOrder: z.coerce.number().default(0),
+  imageAlt: z.string().nullable().optional(),
 })
 
 export async function createPortfolio(formData: FormData) {
@@ -30,9 +41,20 @@ export async function createPortfolio(formData: FormData) {
       material: formData.get('material') as string | null,
       specs: formData.get('specs') as string | null,
       order: formData.get('order') || 0,
+      pieceType: formData.get('pieceType') as string | null,
+      shortDescription: formData.get('shortDescription') as string | null,
+      richDescription: formData.get('richDescription') as string | null,
+      showClientName: formData.get('showClientName') === 'on' || formData.get('showClientName') === 'true',
+      publicClientName: formData.get('publicClientName') as string | null,
+      internalNotes: formData.get('internalNotes') as string | null,
+      isPublished: formData.get('isPublished') === 'on' || formData.get('isPublished') === 'true' || formData.get('isPublished') === null, // default true in UI maybe
+      isFeatured: formData.get('isFeatured') === 'on' || formData.get('isFeatured') === 'true',
+      sortOrder: formData.get('sortOrder') || 0,
+      imageAlt: formData.get('imageAlt') as string | null,
     }
 
     const validData = portfolioSchema.parse(rawData)
+    const cleanRichDescription = sanitizeRichText(validData.richDescription || "");
 
     const file = formData.get('featuredImage') as File | null
     let featuredImage = null
@@ -54,11 +76,14 @@ export async function createPortfolio(formData: FormData) {
     await prisma.portfolio.create({
       data: {
         ...validData,
+        richDescription: cleanRichDescription,
         featuredImage,
+        coverImageUrl: featuredImage, // alias
       }
     })
 
     revalidatePath('/admin/owner/portafolio')
+    revalidatePath('/admin/developer/portafolio')
     revalidatePath('/portafolio')
     revalidatePath('/', 'layout')
     
@@ -82,9 +107,20 @@ export async function updatePortfolio(id: string, formData: FormData) {
       material: formData.get('material') as string | null,
       specs: formData.get('specs') as string | null,
       order: formData.get('order') || 0,
+      pieceType: formData.get('pieceType') as string | null,
+      shortDescription: formData.get('shortDescription') as string | null,
+      richDescription: formData.get('richDescription') as string | null,
+      showClientName: formData.get('showClientName') === 'on' || formData.get('showClientName') === 'true',
+      publicClientName: formData.get('publicClientName') as string | null,
+      internalNotes: formData.get('internalNotes') as string | null,
+      isPublished: formData.get('isPublished') === 'on' || formData.get('isPublished') === 'true',
+      isFeatured: formData.get('isFeatured') === 'on' || formData.get('isFeatured') === 'true',
+      sortOrder: formData.get('sortOrder') || 0,
+      imageAlt: formData.get('imageAlt') as string | null,
     }
 
     const validData = portfolioSchema.parse(rawData)
+    const cleanRichDescription = sanitizeRichText(validData.richDescription || "");
 
     const file = formData.get('featuredImage') as File | null
     let featuredImage = undefined
@@ -107,12 +143,14 @@ export async function updatePortfolio(id: string, formData: FormData) {
       where: { id },
       data: {
         ...validData,
-        ...(featuredImage && { featuredImage }),
+        richDescription: cleanRichDescription,
+        ...(featuredImage && { featuredImage, coverImageUrl: featuredImage }),
       }
     })
 
     revalidatePath(`/portafolio/${validData.slug}`)
     revalidatePath('/admin/owner/portafolio')
+    revalidatePath('/admin/developer/portafolio')
     revalidatePath('/portafolio')
     revalidatePath('/', 'layout')
     
@@ -127,9 +165,17 @@ export async function deletePortfolio(id: string) {
   try {
     await validateAdminAccess("OWNER");
     
-    await prisma.portfolio.delete({ where: { id } })
+    await prisma.portfolio.update({ 
+      where: { id },
+      data: {
+        isDeleted: true,
+        deletedAt: new Date(),
+        isPublished: false
+      }
+    })
     
     revalidatePath('/admin/owner/portafolio')
+    revalidatePath('/admin/developer/portafolio')
     revalidatePath('/portafolio')
     revalidatePath('/', 'layout')
     

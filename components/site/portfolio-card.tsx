@@ -5,6 +5,8 @@ export interface PortfolioCardProps {
   featuredImage?: string | null;
   category?: string | null;
   specs?: string | null;
+  pieceType?: string | null;
+  material?: string | null;
 }
 
 export function PortfolioCard({
@@ -13,6 +15,8 @@ export function PortfolioCard({
   featuredImage,
   category,
   specs,
+  pieceType,
+  material,
 }: PortfolioCardProps) {
   return (
     <div className="group bg-neutral-900 border border-neutral-800 overflow-hidden flex flex-col hover:border-[var(--color-primary)]/50 transition-colors glass w-full">
@@ -46,6 +50,12 @@ export function PortfolioCard({
         <p className="text-neutral-400 text-sm font-light leading-relaxed mb-6 flex-1">
           {specs || 'Sin especificación pública detallada.'}
         </p>
+        {(pieceType || material) && (
+          <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-neutral-800">
+            {pieceType && <span className="bg-neutral-800 text-neutral-300 text-xs px-2 py-1 rounded">{pieceType}</span>}
+            {material && <span className="bg-neutral-800 text-neutral-300 text-xs px-2 py-1 rounded">{material}</span>}
+          </div>
+        )}
       </div>
     </div>
   );

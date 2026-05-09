@@ -42,7 +42,7 @@
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
 
-  --animate-marquee: marquee 35s linear infinite;
+  --animate-marquee: marquee 60s linear infinite;
 
   @keyframes marquee {
     0% {

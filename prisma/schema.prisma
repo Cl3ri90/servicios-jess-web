@@ -70,6 +70,7 @@ model SiteConfig {
 
   capabilitiesTitle     String?  @default("Capacidades Técnicas")
   capabilitiesIntroText String?  @default("Infraestructura tecnológica y experiencia humana para fabricar componentes, estructuras y soluciones metalmecánicas críticas.")
+  trustCarouselSpeed    Int      @default(35)
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -85,6 +86,7 @@ model FeatureFlag {
   ownerVisible  Boolean  @default(false)
   ownerEditable Boolean  @default(false)
   publicVisible Boolean  @default(false)
+  publicOrder   Int      @default(0)
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -141,6 +143,35 @@ model Portfolio {
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  pieceType        String?
+  shortDescription String?  @db.Text
+  richDescription  String?  @db.Text
+  showClientName   Boolean  @default(false)
+  publicClientName String?
+  internalNotes    String?  @db.Text
+  isPublished      Boolean  @default(true)
+  isFeatured       Boolean  @default(false)
+  sortOrder        Int      @default(0)
+  coverImageUrl    String?
+  imageAlt         String?
+  isDeleted        Boolean  @default(false)
+  deletedAt        DateTime?
+
+  images           PortfolioImage[]
+}
+
+model PortfolioImage {
+  id        String   @id @default(uuid())
+  projectId String
+  url       String
+  alt       String?
+  caption   String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  project   Portfolio @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Lead {

@@ -12,8 +12,8 @@ export default async function PortafolioView({
   baseUrl: string
 }) {
   const portfolios = await prisma.portfolio.findMany({
-    where: { tenantId },
-    orderBy: { order: 'asc' }
+    where: { tenantId, isDeleted: false },
+    orderBy: { sortOrder: 'asc' }
   })
 
   // @ts-ignore - Temporary ignore until restart
@@ -47,13 +47,19 @@ export default async function PortafolioView({
            </thead>
            <tbody>
               {portfolios.map((p: any) => (
-                <tr key={p.id} className="border-b border-neutral-800 hover:bg-neutral-800/50 transition-colors">
+                <tr key={p.id} className={`border-b border-neutral-800 transition-colors ${!p.isPublished ? 'opacity-60 bg-zinc-800/40' : 'hover:bg-neutral-800/50'}`}>
                    <td className="px-6 py-4 font-bold text-white flex items-center gap-4">
-                     {p.featuredImage && <img src={p.featuredImage} alt="Fotografía" className="w-10 h-10 object-cover rounded shadow border border-neutral-700 block" />}
-                     {p.title}
+                     {(p.coverImageUrl || p.featuredImage) && <img src={p.coverImageUrl || p.featuredImage} alt="Fotografía" className="w-10 h-10 object-cover rounded shadow border border-neutral-700 block" />}
+                     <div className="flex flex-col gap-1">
+                       <span>{p.title}</span>
+                       <div className="flex gap-2">
+                         {!p.isPublished && <span className="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded w-fit border border-zinc-700 font-bold uppercase">BORRADOR</span>}
+                         {p.isPublished && <span className="text-[10px] bg-green-900/30 text-green-400 px-2 py-0.5 rounded w-fit border border-green-800 font-bold uppercase">PUBLICADO</span>}
+                       </div>
+                     </div>
                    </td>
                    <td className="px-6 py-4 text-xs font-mono">{p.clientName || '-'}</td>
-                   <td className="px-6 py-4 uppercase tracking-widest text-xs text-[#ea580c]">{p.category || '-'}</td>
+                   <td className="px-6 py-4 uppercase tracking-widest text-xs text-[#ea580c]">{p.category || p.industry || '-'}</td>
                    <td className="px-6 py-4 text-right flex items-center justify-end gap-4">
                       <Link href={`${baseUrl}?editId=${p.id}`} className="text-[#ea580c] text-sm font-medium hover:underline">
                         Editar

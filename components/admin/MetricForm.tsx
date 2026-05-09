@@ -4,6 +4,7 @@ import { useState, useTransition, useEffect } from 'react'
 import { createMetric, deleteMetric } from '@/lib/actions/metrics'
 import { LivePreviewShell } from '@/components/admin/live-preview-shell'
 import { DirtySaveBtn } from '@/components/admin/dirty-save-btn'
+import { KpiCard } from '@/components/site/kpi-card'
 
 export function MetricForm({ tenantId }: { tenantId?: string }) {
   const [isPending, startTransition] = useTransition()
@@ -99,19 +100,13 @@ export function MetricForm({ tenantId }: { tenantId?: string }) {
             <p className="text-zinc-400 font-semibold text-[10px] text-center tracking-widest uppercase mb-8">
               Componente de Métrica
             </p>
-            <div className="p-5 rounded-xl border border-white/10 bg-black/40 flex flex-col justify-center transform transition-all duration-300 hover:scale-105 mx-auto w-full max-w-[250px]">
-              <div className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tighter">
-                {formState.value || '0+'}
-              </div>
-              <div className="text-xs sm:text-sm text-zinc-400 mt-2 leading-tight">
-                {formState.label || 'Etiqueta del KPI'}
-              </div>
+            <div className="mx-auto w-full max-w-[280px]">
+              <KpiCard 
+                value={formState.value || '0+'}
+                label={formState.label || 'Etiqueta del KPI'}
+                description={formState.description}
+              />
             </div>
-            {formState.description && (
-              <p className="text-center text-xs text-zinc-500 mt-6 max-w-[250px] mx-auto italic">
-                {formState.description}
-              </p>
-            )}
           </div>
         </LivePreviewShell>
       </div>

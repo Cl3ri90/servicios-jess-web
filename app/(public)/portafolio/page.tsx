@@ -1,6 +1,7 @@
 import { getSiteConfig } from '@/lib/site/get-site-config';
 import type { Metadata } from 'next';
 import { PortfolioCard } from '@/components/site/portfolio-card';
+import { prisma } from '@/lib/db/prisma';
 
 export const dynamic = "force-dynamic";
 
@@ -11,27 +12,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-// Temporary static array since 'Portfolio' model is not yet in Prisma Schema for this project.
-const portfolios = [
-  {
-    id: 'PRJ-101',
-    title: 'Estructuras de Soporte',
-    clientName: 'Minera Norte',
-    featuredImage: 'https://images.unsplash.com/photo-1541888087405-d14457ebddc1?q=80&w=1470&auto=format&fit=crop',
-    category: 'Ingeniería Pesada',
-    specs: 'Fabricación y calibración estructural para correas transportadoras.'
-  },
-  {
-    id: 'PRJ-102',
-    title: 'Mecanizado CNC Tolvas',
-    clientName: 'Consorcio Logístico',
-    featuredImage: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1469&auto=format&fit=crop',
-    category: 'Mecanizado',
-    specs: 'Reparación y mecanizado de componentes de desgaste de alto tonelaje.'
-  }
-];
-
 export default async function PortafolioPage() {
+  const portfolios = await prisma.portfolio.findMany({
+    where: { isDeleted: false, isPublished: true },
+    orderBy: { sortOrder: 'asc' }
+  });
+
   return (
     <div className="bg-neutral-950 py-16 text-neutral-100 flex-1">
       <div className="bg-neutral-900 border-b border-neutral-800 py-24 mb-16 relative mt-20 overflow-hidden">
@@ -45,19 +31,27 @@ export default async function PortafolioPage() {
       </div>
       
       <div className="max-w-[1320px] mx-auto px-6 pb-24">
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {portfolios.map(item => (
-              <PortfolioCard 
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                clientName={item.clientName}
-                featuredImage={item.featuredImage}
-                category={item.category}
-                specs={item.specs}
-              />
-            ))}
-         </div>
+         {portfolios.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-12 text-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/30 min-h-[300px]">
+              <span className="text-zinc-500 font-mono text-lg">Aún no hay proyectos publicados.</span>
+            </div>
+         ) : (
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {portfolios.map(item => (
+                <PortfolioCard 
+                  key={item.id}
+                  id={item.id}
+                  title={item.title}
+                  clientName={item.showClientName ? (item.publicClientName || item.clientName) : null}
+                  featuredImage={item.coverImageUrl || item.featuredImage}
+                  category={item.category || item.industry}
+                  specs={item.shortDescription || item.specs}
+                  pieceType={item.pieceType}
+                  material={item.material}
+                />
+              ))}
+           </div>
+         )}
       </div>
     </div>
   );

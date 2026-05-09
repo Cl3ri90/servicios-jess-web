@@ -181,3 +181,31 @@ export async function updateGlobalSettings(formData: FormData) {
     return { error: 'Error al procesar la actualización industrial.' };
   }
 }
+
+export async function updateTrustCarouselSpeed(speed: number) {
+  await validateAdminAccess("DEVELOPER");
+  
+  try {
+    // Check if SiteConfig exists
+    const current = await prisma.siteConfig.findUnique({ where: { id: "singleton" } });
+    if (!current) {
+       await prisma.siteConfig.create({
+         data: { id: "singleton", name: DEFAULT_SETTINGS.headerText, trustCarouselSpeed: speed }
+       });
+    } else {
+       await prisma.siteConfig.update({
+         where: { id: "singleton" },
+         data: { trustCarouselSpeed: speed }
+       });
+    }
+
+    revalidatePath('/');
+    revalidatePath('/admin/owner/clientes');
+    revalidatePath('/admin/developer/clientes');
+    
+    return { success: 'Velocidad actualizada correctamente.' };
+  } catch (error: any) {
+    console.error('updateTrustCarouselSpeed error:', error);
+    return { error: 'Error al actualizar velocidad.' };
+  }
+}

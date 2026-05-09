@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { DeveloperFlagsTable } from '@/components/admin/developer-flags-table';
+import { PublicModuleReorder } from '@/components/admin/PublicModuleReorder';
 import { FLAG_CATALOG } from '@/lib/site/flags-catalog';
 import { validateAdminAccess } from '@/lib/admin/permissions';
 
@@ -82,6 +83,8 @@ export default async function DeveloperFlagsPage() {
             <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mt-1">Front-end Público</p>
          </div>
       </div>
+
+      <PublicModuleReorder initialFlags={finalFlags} />
 
       <DeveloperFlagsTable initialFlags={finalFlags} />
     </div>

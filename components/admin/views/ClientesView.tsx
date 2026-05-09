@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db/prisma'
 import { ClientForm, DeleteClientButton } from '@/components/admin/ClientForm'
 import { getModuleFlag } from '@/lib/site/get-module-flag'
+import { TrustConfigForm } from '@/components/admin/TrustConfigForm'
 
 export default async function ClientesView({ tenantId }: { tenantId: string }) {
   // @ts-ignore
@@ -10,6 +11,8 @@ export default async function ClientesView({ tenantId }: { tenantId: string }) {
   })
 
   const flag = await getModuleFlag('trust')
+  const siteConfig = await prisma.siteConfig.findUnique({ where: { id: "singleton" } })
+  const currentSpeed = siteConfig?.trustCarouselSpeed || 35
 
   // Diagnostic logic
   let diagnostic = { status: 'success', text: 'Visible en web pública' };
@@ -48,6 +51,8 @@ export default async function ClientesView({ tenantId }: { tenantId: string }) {
           </p>
         )}
       </div>
+
+      <TrustConfigForm currentSpeed={currentSpeed} />
 
       <ClientForm tenantId={tenantId} />
 

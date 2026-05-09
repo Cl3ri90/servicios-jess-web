@@ -1,16 +1,20 @@
 import { HeroSection } from '@/components/site/hero-section';
-import { ServicesSection } from '@/components/site/services-section';
-import { TrustSection } from '@/components/site/trust-section';
-import { getActiveServices } from '@/lib/site/get-services';
+import { PublicKpiSection } from '@/components/site/public-kpi-section';
+import { PublicTrustSection } from '@/components/site/public-trust-section';
+import { PublicServicesSection } from '@/components/site/public-services-section';
+import { PublicMainCtaSection } from '@/components/site/public-main-cta-section';
 import { getSiteConfig } from '@/lib/site/get-site-config';
-import { getActiveClients } from '@/lib/site/get-clients';
+import { prisma } from '@/lib/db/prisma';
 
 export const dynamic = "force-dynamic";
 
 export default async function PublicHomePage() {
-  const { config, activeFlags } = await getSiteConfig();
-  const services = await getActiveServices();
-  const { clients } = await getActiveClients();
+  const { config } = await getSiteConfig();
+
+  const activeModules = await prisma.featureFlag.findMany({
+    where: { isActive: true, publicVisible: true },
+    orderBy: { publicOrder: 'asc' }
+  });
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -21,17 +25,15 @@ export default async function PublicHomePage() {
         overline="Servicios Especializados"
       />
       
-      {clients.length > 0 && (
-        <TrustSection clients={clients} />
-      )}
-
-      {activeFlags.includes('capacidades') && (
-        <ServicesSection 
-          services={services} 
-          title={config?.capabilitiesTitle || undefined}
-          introText={config?.capabilitiesIntroText || undefined}
-        />
-      )}
+      {activeModules.map(module => {
+        switch(module.key) {
+          case 'indicadores': return <PublicKpiSection key={module.key} />;
+          case 'trust': return <PublicTrustSection key={module.key} />;
+          case 'capacidades': return <PublicServicesSection key={module.key} />;
+          case 'cta_principal': return <PublicMainCtaSection key={module.key} />;
+          default: return null;
+        }
+      })}
     </div>
   );
 }

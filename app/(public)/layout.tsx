@@ -45,7 +45,7 @@ export default async function PublicLayout({ children }: { children: React.React
       <main className="flex-1 pt-0">
         {children}
       </main>
-      <MainCtaWrapper config={mainCtaConfig} activeFlags={activeFlags} />
+      <MainCtaWrapper config={mainCtaConfig} activeFlags={activeFlags} disableOnHome={true} />
       <FloatingCTAWrapper />
       <Footer 
         brandName={config?.name || 'SERVICIOS JESS'}
