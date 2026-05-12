@@ -6,6 +6,8 @@ import { LeadReplyEmail } from '@/emails/lead-reply-email';
 import { LeadConfirmationEmail } from '@/emails/lead-confirmation-email';
 import { InternalNewLeadEmail } from '@/emails/internal-new-lead-email';
 
+import { validateAdminAccess } from '@/lib/admin/permissions';
+
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'contacto@tudominio.cl';
 const INTERNAL_EMAIL = process.env.RESEND_INTERNAL_TO_EMAIL || 'serviciosjess@gmail.com';
 const REPLY_TO = process.env.RESEND_REPLY_TO_EMAIL || 'serviciosjess@gmail.com';
@@ -136,7 +138,9 @@ export async function sendInternalNewLeadNotification(lead: any) {
   }
 }
 
+
 export async function sendLeadManualReply({ leadId, subject, body }: { leadId: string, subject: string, body: string }) {
+  await validateAdminAccess("OWNER");
   if (!resend) return { success: false, error: 'Resend no está configurado.' };
   if (!body?.trim() || !subject?.trim()) return { success: false, error: 'Asunto y mensaje son requeridos.' };
 

@@ -144,7 +144,7 @@ export async function createContactLead(formData: FormData) {
 
 // CRM Actions
 export async function getLeadsCRM(filters?: any) {
-  await validateAdminAccess("DEVELOPER");
+  await validateAdminAccess("OWNER");
   
   const whereClause: any = {};
   
@@ -178,7 +178,7 @@ export async function getLeadsCRM(filters?: any) {
 }
 
 export async function getLeadById(id: string) {
-  await validateAdminAccess("DEVELOPER");
+  await validateAdminAccess("OWNER");
   return prisma.lead.findUnique({
     where: { id },
     include: {
