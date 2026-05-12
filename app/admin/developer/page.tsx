@@ -14,7 +14,6 @@ export default async function DeveloperDashboard() {
   const [
     capTotal, capActive,
     portTotal, portActive,
-    sheetTotal, sheetActive,
     leadTotal, flagTotal, flagActive, flagOwner, flagPublic,
     siteConfig, ctaConfig, latestFlags,
     analyticsData
@@ -23,8 +22,6 @@ export default async function DeveloperDashboard() {
     prisma.serviceCapability.count({ where: { isActive: true } }),
     prisma.portfolio.count(),
     prisma.portfolio.count({ where: { isActive: true } }),
-    prisma.technicalSheet.count(),
-    prisma.technicalSheet.count({ where: { isActive: true } }),
     prisma.lead.count(),
     prisma.featureFlag.count(),
     prisma.featureFlag.count({ where: { isActive: true } }),
@@ -90,7 +87,6 @@ export default async function DeveloperDashboard() {
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
          <MetricCard title="Capacidades" value={capTotal} sub={`${capActive} Activas • Pub`} icon={Icons.Hammer} color="text-orange-500" />
          <MetricCard title="Portafolio" value={portTotal} sub={`${portActive} Proyectos Vivos`} icon={Icons.FolderOpen} color="text-[#ea580c]" />
-         <MetricCard title="Fichas Técnicas" value={sheetTotal} sub={`${sheetActive} Indexadas para Pub`} icon={Icons.FileText} color="text-purple-500" />
          <MetricCard title="Leads Captados" value={leadTotal} sub="Total Histórico" icon={Icons.Users} color="text-green-500" />
       </section>
 
@@ -125,7 +121,6 @@ export default async function DeveloperDashboard() {
                  <Shortcut label="Portafolio" href="/admin/owner/portafolio" icon={Icons.Image} />
                  <Shortcut label="SEO Core" href="/admin/developer/seo" icon={Icons.Search} isDevOnly />
                  <Shortcut label="Botón Flotante CTA" href="/admin/developer/cta-flotante" icon={Icons.MessageCircle} isDevOnly />
-                 <Shortcut label="Catálogo Fichas" href="/admin/developer/catalogo-fichas" icon={Icons.FileArchive} isDevOnly />
               </div>
             </section>
 

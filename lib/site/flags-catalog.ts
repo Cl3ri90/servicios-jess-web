@@ -4,9 +4,7 @@ export const FLAG_CATALOG = [
   { key: 'portafolio', name: 'Proyectos Realizados', category: 'Owner CMS', description: 'Galería de casos de éxito y proyectos.' },
   { key: 'trust', name: 'Empresas Trust', category: 'Owner CMS', description: 'Logos de clientes asociados o socios.' },
   { key: 'indicadores', name: 'Indicadores KPI', category: 'Owner CMS', description: 'Métricas o estadísticas de operación de la empresa.' },
-  { key: 'fichas_tecnicas', name: 'Gestor Fichas Técnicas', category: 'Owner CMS', description: 'Sectores internos donde el dueño gestiona catálogos PDF.' },
   
-  { key: 'catalogo_fichas', name: 'Render Catálogo Fichas', category: 'Frontend Público', description: 'El sitio renderizará los PDFs para libre visualización/descarga desde los paths públicos.' },
   { key: 'empresa', name: 'Vista Nuestra Empresa', category: 'Frontend Público', description: 'Sección para exponer Historia, Misión y Visión general.' },
   { key: 'contacto', name: 'Formulario de Contacto', category: 'Frontend Público', description: 'Formulario de contacto libre y render del mapa (gmaps).' },
 

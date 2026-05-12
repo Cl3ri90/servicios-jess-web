@@ -37,9 +37,9 @@ export function WonLostDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div className="bg-neutral-900 border border-neutral-800 rounded-xl w-full max-w-md overflow-hidden shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-        <div className={`px-6 py-4 border-b flex justify-between items-center ${type === 'WON' ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-neutral-950 border-neutral-800'}`}>
+        <div className={`px-6 py-4 border-b flex justify-between items-center ${type === 'WON' ? 'bg-emerald-900/20 border-emerald-500/20' : 'bg-neutral-950 border-neutral-800'}`}>
           <h3 className={`font-bold uppercase tracking-widest ${type === 'WON' ? 'text-emerald-400' : 'text-neutral-300'}`}>
-            Marcar como {type === 'WON' ? 'Ganado' : 'Perdido'}
+            Marcar como {type === 'WON' ? 'Resuelto' : 'Perdido'}
           </h3>
           <button onClick={onClose} className="text-neutral-500 hover:text-white transition-colors">
             <X className="w-5 h-5" />
@@ -57,7 +57,7 @@ export function WonLostDialog({
                 value={estimatedValue}
                 onChange={e => setEstimatedValue(e.target.value)}
                 placeholder="Ej. 1500000"
-                className="w-full bg-neutral-950 border border-neutral-800 rounded-md p-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                className="w-full bg-neutral-950 border border-neutral-800 rounded-md p-3 text-white focus:outline-none focus:border-emerald-700 transition-colors"
               />
               <p className="text-xs text-neutral-500 mt-2 leading-relaxed">
                 Agregar el valor estimado permitirá calcular el retorno comercial generado por la web en el Command Center.
@@ -98,7 +98,7 @@ export function WonLostDialog({
               disabled={loading}
               className={`px-6 py-2 rounded text-sm font-bold transition-colors ${
                 type === 'WON' 
-                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white' 
+                  ? 'bg-emerald-900 hover:bg-emerald-800 text-emerald-100 border border-emerald-700/50' 
                   : 'bg-neutral-800 hover:bg-neutral-700 text-white'
               } disabled:opacity-50`}
             >

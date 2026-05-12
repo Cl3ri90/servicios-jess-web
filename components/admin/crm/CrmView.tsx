@@ -1,16 +1,19 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { Lead, LeadActivity } from '@prisma/client'
 import { CrmPipeline } from './CrmPipeline'
 import { CrmTable } from './CrmTable'
 import { LeadDetailPanel } from './LeadDetailPanel'
 import { WonLostDialog } from './WonLostDialog'
-import { Search, LayoutGrid, List, Archive, Download } from 'lucide-react'
+import { Search, LayoutGrid, List, Archive, Download, RefreshCw } from 'lucide-react'
 
 type LeadWithActivities = Lead & { activities: LeadActivity[] }
 
 export function CrmView({ initialLeads }: { initialLeads: LeadWithActivities[] }) {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [viewMode, setViewMode] = useState<'pipeline' | 'table'>('pipeline')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null)
@@ -39,10 +42,10 @@ export function CrmView({ initialLeads }: { initialLeads: LeadWithActivities[] }
     return initialLeads.find(l => l.id === selectedLeadId) || null;
   }, [initialLeads, selectedLeadId]);
 
-  // Derived metrics
+  // Derived metrics - Updated to the new flow
   const totalNew = initialLeads.filter(l => l.status === 'NEW').length
-  const totalInProgress = initialLeads.filter(l => ['OPEN', 'IN_PROGRESS', 'ATTEMPTED_CONTACT', 'CONTACTED', 'QUALIFIED', 'QUOTED'].includes(l.status)).length
-  const totalWon = initialLeads.filter(l => l.status === 'WON').length
+  const totalContacted = initialLeads.filter(l => !['NEW', 'WON', 'LOST', 'ARCHIVED'].includes(l.status)).length
+  const totalResolved = initialLeads.filter(l => l.status === 'WON').length
   const totalLost = initialLeads.filter(l => l.status === 'LOST').length
   
   const now = new Date();
@@ -50,6 +53,12 @@ export function CrmView({ initialLeads }: { initialLeads: LeadWithActivities[] }
 
   const handleOpenWonLost = (leadId: string, type: 'WON' | 'LOST') => {
     setWonLostDialog({ open: true, type, leadId })
+  }
+
+  const handleRefresh = () => {
+    startTransition(() => {
+      router.refresh()
+    })
   }
 
   return (
@@ -62,7 +71,19 @@ export function CrmView({ initialLeads }: { initialLeads: LeadWithActivities[] }
             <h2 className="text-3xl font-black text-white">CRM Comercial</h2>
             <p className="text-neutral-400 mt-2">Gestión de oportunidades recibidas desde el sitio público.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
+            <button 
+              onClick={handleRefresh}
+              disabled={isPending}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors bg-neutral-900 border border-neutral-800 rounded disabled:opacity-50"
+              title="Actualizar datos"
+            >
+              <RefreshCw className={`w-4 h-4 ${isPending ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">{isPending ? 'Actualizando...' : 'Actualizar'}</span>
+            </button>
+
+            <div className="w-px h-6 bg-neutral-800 mx-1 md:mx-2"></div>
+
             <button 
               onClick={() => setViewMode('pipeline')}
               className={`p-2 rounded border transition-colors ${viewMode === 'pipeline' ? 'bg-neutral-800 border-neutral-700 text-white' : 'bg-transparent border-transparent text-neutral-500 hover:text-neutral-300'}`}
@@ -77,9 +98,9 @@ export function CrmView({ initialLeads }: { initialLeads: LeadWithActivities[] }
             >
               <List className="w-5 h-5" />
             </button>
-            <div className="w-px h-6 bg-neutral-800 mx-2"></div>
+            <div className="w-px h-6 bg-neutral-800 mx-1 md:mx-2"></div>
             <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors bg-neutral-900 border border-neutral-800 rounded">
-              <Download className="w-4 h-4" /> Exportar
+              <Download className="w-4 h-4" /> <span className="hidden sm:inline">Exportar</span>
             </button>
           </div>
         </div>
@@ -92,16 +113,16 @@ export function CrmView({ initialLeads }: { initialLeads: LeadWithActivities[] }
           <div className="text-2xl font-black text-white">{totalNew}</div>
         </div>
         <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
-          <div className="text-neutral-500 text-xs font-bold uppercase tracking-widest mb-1">En Gestión</div>
-          <div className="text-2xl font-black text-white">{totalInProgress}</div>
+          <div className="text-neutral-500 text-xs font-bold uppercase tracking-widest mb-1">Contactados</div>
+          <div className="text-2xl font-black text-white">{totalContacted}</div>
         </div>
         <div className="bg-[#ea580c]/10 border border-[#ea580c]/20 rounded-lg p-4">
           <div className="text-[#ea580c] text-xs font-bold uppercase tracking-widest mb-1">Vencidos</div>
           <div className="text-2xl font-black text-[#ea580c]">{totalOverdue}</div>
         </div>
-        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4">
-          <div className="text-emerald-500 text-xs font-bold uppercase tracking-widest mb-1">Ganados</div>
-          <div className="text-2xl font-black text-emerald-400">{totalWon}</div>
+        <div className="bg-emerald-900/20 border border-emerald-800/30 rounded-lg p-4">
+          <div className="text-emerald-500 text-xs font-bold uppercase tracking-widest mb-1">Resueltos</div>
+          <div className="text-2xl font-black text-emerald-400">{totalResolved}</div>
         </div>
         <div className="bg-zinc-800/40 border border-zinc-700/50 rounded-lg p-4">
           <div className="text-zinc-500 text-xs font-bold uppercase tracking-widest mb-1">Perdidos</div>

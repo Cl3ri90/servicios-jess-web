@@ -15,7 +15,7 @@ export default async function OwnerDescargasPage() {
   return (
     <div className="max-w-4xl mx-auto pb-20">
       <div className="mb-8 border-b border-neutral-800 pb-4">
-        <h2 className="text-3xl font-black text-white">Fichas Técnicas y Documentos</h2>
+        <h2 className="text-3xl font-black text-white">Documentos y Descargas</h2>
         <p className="text-neutral-400 mt-1 text-sm">
           Gestiona los documentos descargables que aparecerán en la sección de Servicios. 
           Sube el archivo a Supabase Storage y pega aquí la URL pública.
