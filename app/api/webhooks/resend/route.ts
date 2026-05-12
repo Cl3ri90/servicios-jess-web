@@ -3,11 +3,14 @@ import { prisma } from '@/lib/prisma';
 import { resend } from '@/lib/email/resend-client';
 import { logEmailRecord, logActivity } from '@/lib/email/lead-email-logging';
 import { extractInboundCode } from '@/lib/email/inbound-utils';
-import { sanitizeInboundEmailHtml } from '@/lib/security/sanitize-inbound';
+import { sanitizeInboundEmailHtml, htmlToSafeText } from '@/lib/security/sanitize-inbound';
 import { Webhook } from 'svix';
 import { revalidatePath } from 'next/cache';
 
 const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET;
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
@@ -164,10 +167,10 @@ async function handleEmailReceived(data: any) {
 
   // 3. Sanitización y guardado
   const htmlBody = fullEmail.html ? sanitizeInboundEmailHtml(fullEmail.html) : null;
-  const textBody = fullEmail.text || '(Contenido no disponible)';
+  const textBody = fullEmail.text || (fullEmail.html ? htmlToSafeText(fullEmail.html) : '(Contenido no disponible)');
 
   try {
-    // A. Registrar correo
+    // A. Registrar correo (Usamos textBody como cuerpo principal por seguridad)
     await logEmailRecord({
       leadId,
       direction: 'INBOUND',
