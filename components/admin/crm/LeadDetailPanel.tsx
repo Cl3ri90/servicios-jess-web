@@ -35,6 +35,7 @@ export function LeadDetailPanel({
   const [note, setNote] = useState('')
   const [savingNote, setSavingNote] = useState(false)
   const [followUpDate, setFollowUpDate] = useState('')
+  const [isMounted, setIsMounted] = useState(false)
 
   // Reply Form State
   const [replySubject, setReplySubject] = useState('')
@@ -43,6 +44,10 @@ export function LeadDetailPanel({
   const [replyError, setReplyError] = useState('')
 
   const [activeTab, setActiveTab] = useState<'info' | 'reply' | 'emails'>('info')
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   useEffect(() => {
     let isMounted = true;
@@ -223,7 +228,7 @@ export function LeadDetailPanel({
                     <div className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest mb-1">Fecha Ingreso</div>
                     <div className="flex items-center gap-2 text-sm text-neutral-300">
                       <Calendar className="w-4 h-4 text-neutral-500" />
-                      {new Date(lead.createdAt).toLocaleDateString()}
+                      <span suppressHydrationWarning>{isMounted ? new Date(lead.createdAt).toLocaleDateString() : '...'}</span>
                     </div>
                   </div>
                   <div>
@@ -316,7 +321,9 @@ export function LeadDetailPanel({
                       <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] bg-neutral-900 p-4 rounded border border-neutral-800 shadow">
                         <div className="flex items-center justify-between mb-1">
                           <div className="font-bold text-white text-xs">{activity.title}</div>
-                          <div className="text-[10px] text-neutral-500 font-mono">{new Date(activity.createdAt).toLocaleDateString()}</div>
+                          <div className="text-[10px] text-neutral-500 font-mono" suppressHydrationWarning>
+                            {isMounted ? new Date(activity.createdAt).toLocaleDateString() : '...'}
+                          </div>
                         </div>
                         {activity.note && (
                           <div className="text-xs text-neutral-400 mt-2 bg-neutral-950/50 p-2 rounded">
@@ -393,8 +400,8 @@ export function LeadDetailPanel({
                             </span>
                           </div>
                           <h4 className="font-bold text-white text-sm">{email.subject}</h4>
-                          <div className="text-[10px] text-neutral-500 font-mono mt-1">
-                            {new Date(email.createdAt).toLocaleString('es-CL')}
+                          <div className="text-[10px] text-neutral-500 font-mono mt-1" suppressHydrationWarning>
+                            {isMounted ? new Date(email.createdAt).toLocaleString('es-CL') : '...'}
                           </div>
                         </div>
                       </div>

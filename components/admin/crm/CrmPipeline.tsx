@@ -3,7 +3,7 @@
 import { Lead, LeadActivity, LeadPipelineStage } from '@prisma/client'
 import { updateLeadPipelineStage } from '@/lib/actions/contact-leads'
 import { Clock, Phone, Mail, Building2, ChevronRight, ChevronLeft, Calendar, FileText } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 type LeadWithActivities = Lead & { activities: LeadActivity[] }
 
@@ -26,6 +26,11 @@ export function CrmPipeline({
   onOpenWonLost: (id: string, type: 'WON' | 'LOST') => void
 }) {
   const [isUpdating, setIsUpdating] = useState<string | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const handleMove = async (lead: LeadWithActivities, direction: 'prev' | 'next') => {
     if (isUpdating) return;
@@ -121,9 +126,9 @@ export function CrmPipeline({
                     <div className="mt-4 pt-3 border-t border-neutral-800/50 flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         {lead.nextFollowUpAt ? (
-                          <div className={`flex items-center gap-1 text-[10px] ${isOverdue ? 'text-[#ea580c] font-bold' : 'text-neutral-500'}`} title="Seguimiento">
+                          <div className={`flex items-center gap-1 text-[10px] ${isOverdue ? 'text-[#ea580c] font-bold' : 'text-neutral-500'}`} title="Seguimiento" suppressHydrationWarning>
                             <Clock className="w-3 h-3" />
-                            {new Date(lead.nextFollowUpAt).toLocaleDateString()}
+                            {isMounted ? new Date(lead.nextFollowUpAt).toLocaleDateString() : '...'}
                           </div>
                         ) : (
                           <div className="text-[10px] text-neutral-600">Sin seguimiento</div>

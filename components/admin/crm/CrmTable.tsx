@@ -1,6 +1,7 @@
 'use client'
 
-import { Lead, LeadActivity } from '@prisma/client'
+import { useState, useEffect } from 'react'
+import type { Lead, LeadActivity } from '@prisma/client'
 import { Clock } from 'lucide-react'
 
 type LeadWithActivities = Lead & { activities: LeadActivity[] }
@@ -14,6 +15,11 @@ export function CrmTable({
   onSelectLead: (id: string) => void,
   onOpenWonLost: (id: string, type: 'WON' | 'LOST') => void
 }) {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   return (
     <div className="bg-neutral-900 border border-neutral-800 rounded-lg overflow-hidden">
@@ -52,8 +58,12 @@ export function CrmTable({
                   className={`border-b border-neutral-800 hover:bg-neutral-800/50 transition-colors align-top cursor-pointer ${lead.status === 'ARCHIVED' ? 'opacity-50' : ''}`}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-xs">
-                    <div className="font-mono text-neutral-300">{new Date(lead.createdAt).toLocaleDateString()}</div>
-                    <div className="font-mono text-neutral-500 text-[10px] mt-0.5">{new Date(lead.createdAt).toLocaleTimeString()}</div>
+                    <div className="font-mono text-neutral-300" suppressHydrationWarning>
+                      {isMounted ? new Date(lead.createdAt).toLocaleDateString() : '...'}
+                    </div>
+                    <div className="font-mono text-neutral-500 text-[10px] mt-0.5" suppressHydrationWarning>
+                      {isMounted ? new Date(lead.createdAt).toLocaleTimeString() : '...'}
+                    </div>
                     <div className="mt-3 flex flex-col gap-1 items-start">
                       <span className={`text-[10px] uppercase tracking-widest ${priorityClasses}`}>
                         {lead.priority}
@@ -97,7 +107,7 @@ export function CrmTable({
                     {lead.nextFollowUpAt ? (
                       <div className={`flex flex-col items-center gap-1 ${isOverdue ? 'text-[#ea580c] font-bold' : 'text-neutral-400'}`}>
                         <Clock className="w-4 h-4" />
-                        <span>{new Date(lead.nextFollowUpAt).toLocaleDateString()}</span>
+                        <span suppressHydrationWarning>{isMounted ? new Date(lead.nextFollowUpAt).toLocaleDateString() : '...'}</span>
                         {isOverdue && <span className="text-[9px] uppercase tracking-widest bg-[#ea580c]/10 px-2 py-0.5 rounded">Vencido</span>}
                       </div>
                     ) : (

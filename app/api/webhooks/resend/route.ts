@@ -58,6 +58,21 @@ export async function POST(req: NextRequest) {
 
   // 7. Procesar evento email.received (INBOUND)
   if (type === 'email.received') {
+    // Deduplicación temprana (Early return)
+    const messageId = data.message_id;
+    const existing = await prisma.leadEmail.findUnique({
+      where: { 
+        provider_providerMessageId: { 
+          provider: 'resend', 
+          providerMessageId: messageId 
+        } 
+      }
+    });
+
+    if (existing) {
+      return NextResponse.json({ success: true, skipped: true, reason: 'Duplicate' });
+    }
+
     return handleEmailReceived(data);
   }
 
@@ -95,14 +110,16 @@ async function handleEmailReceived(data: any) {
     if (!resend) {
       throw new Error('Resend client is not initialized');
     }
-    const res = await resend.emails.get(emailId);
+    // IMPORTANTE: Para correos recibidos (receiving) se usa este método específico
+    const res = await (resend.emails as any).receiving.get(emailId);
     if (!res.data) {
-      throw new Error('No se pudo recuperar el contenido del correo');
+      throw new Error('No se pudo recuperar el contenido del correo recibido');
     }
     fullEmail = res.data;
   } catch (error: any) {
     console.error('[Resend Webhook] Error al recuperar contenido:', error);
-    return NextResponse.json({ error: 'Error al recuperar contenido' }, { status: 500 });
+    // Retornamos 200 con error interno para evitar reintentos infinitos si es un error de API
+    return NextResponse.json({ error: 'Error al recuperar contenido de Resend' }, { status: 200 });
   }
 
   // C. Matching del Lead
