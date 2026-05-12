@@ -12,7 +12,6 @@ export const FLAG_CATALOG = [
 
   { key: 'seo_manager', name: 'SEO Core Manager', category: 'Developer Tools', description: 'Motor SEO centralizado: OpenGraph, Meta Tags y Schemas de la plataforma.' },
 
-  { key: 'barra_anuncio', name: 'Barra de Anuncios (Top)', category: 'Marketing / Conversiones', description: 'Banner emergente pegado al techo estelar de la aplicación.' },
   { key: 'popup_promocional', name: 'Pop-Up Comercial', category: 'Marketing / Conversiones', description: 'Modal bloqueador intrusivo para promociones y captación (con frecuencias).' },
   { key: 'cta_flotante', name: 'Botón CTA Flotante', category: 'Marketing / Conversiones', description: 'WhatsApp o botones flotantes de mensajería asíncrona.' },
 

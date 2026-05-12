@@ -80,11 +80,11 @@ export default async function ContactPage() {
             </div>
 
             {/* Mapa Fallback Minimalista o Iframe Dinámico */}
-            <div className="rounded-sm overflow-hidden h-80 border border-neutral-800/50 relative bg-[var(--background)] flex flex-col items-center justify-center text-center glass">
+            <div className="group rounded-sm overflow-hidden h-80 border border-neutral-800/50 relative bg-[var(--background)] flex flex-col items-center justify-center text-center glass">
               {config?.mapEmbedUrl ? (
                 <iframe 
                   src={config.mapEmbedUrl} 
-                  className="absolute inset-0 w-full h-full grayscale opacity-80 mix-blend-luminosity hover:mix-blend-normal hover:opacity-100 transition-all duration-500"
+                  className="absolute inset-0 w-full h-full grayscale opacity-80 mix-blend-luminosity group-hover:grayscale-0 group-hover:mix-blend-normal group-hover:opacity-100 group-focus-within:grayscale-0 group-focus-within:mix-blend-normal group-focus-within:opacity-100 active:grayscale-0 active:mix-blend-normal active:opacity-100 transition-all duration-500 ease-out pointer-events-auto"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"

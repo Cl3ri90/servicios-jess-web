@@ -8,6 +8,18 @@ import { X, Building2, Mail, Phone, Clock, Calendar, Check, AlertCircle, FileTex
 
 type LeadWithActivitiesAndEmails = Lead & { activities: LeadActivity[], emails: LeadEmail[] }
 
+const emailStatusStyles: Record<string, string> = {
+  PENDING: "bg-zinc-800/40 text-zinc-400 border-zinc-700",
+  SENT: "bg-amber-500/10 text-amber-300 border-amber-500/20",
+  DELIVERED: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
+  OPENED: "bg-[#ea580c]/10 text-[#ea580c] border-[#ea580c]/20",
+  BOUNCED: "bg-red-500/10 text-red-300 border-red-500/20",
+  FAILED: "bg-red-500/10 text-red-300 border-red-500/20",
+  RECEIVED: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+};
+
+const fallbackEmailStatusStyle = "bg-zinc-800/40 text-zinc-400 border-zinc-700";
+
 export function LeadDetailPanel({ 
   lead: initialLead, 
   onClose,
@@ -374,16 +386,9 @@ export function LeadDetailPanel({
                             {email.direction === 'OUTBOUND' ? (
                               <span className="text-[10px] font-bold bg-neutral-800 text-neutral-300 px-2 py-0.5 rounded border border-neutral-700 uppercase">Enviado al Cliente</span>
                             ) : (
-                              <span className="text-[10px] font-bold bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded border border-blue-500/20 uppercase">Interno</span>
+                              <span className="text-[10px] font-bold bg-[#ea580c]/20 text-[#ea580c] px-2 py-0.5 rounded border border-[#ea580c]/30 uppercase">Respuesta del Cliente</span>
                             )}
-                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border
-                              ${email.status === 'SENT' ? 'bg-neutral-800 text-neutral-300 border-neutral-700' : 
-                                email.status === 'DELIVERED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                                email.status === 'OPENED' ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                                email.status === 'BOUNCED' || email.status === 'FAILED' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                                'bg-neutral-800 text-neutral-500'
-                              }
-                            `}>
+                            <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${emailStatusStyles[email.status] ?? fallbackEmailStatusStyle}`}>
                               {email.status}
                             </span>
                           </div>
@@ -400,15 +405,24 @@ export function LeadDetailPanel({
                         </div>
                       )}
 
-                      <div className="text-xs text-neutral-400 bg-neutral-950 p-3 rounded line-clamp-4 whitespace-pre-wrap">
-                        {email.body.replace(/<[^>]*>?/gm, '')}
-                      </div>
+                      {email.direction === 'INBOUND' && email.htmlBody ? (
+                        <div className="bg-neutral-950 p-4 rounded-lg overflow-hidden border border-neutral-800">
+                          <div 
+                            className="text-xs text-neutral-300 max-h-[400px] overflow-y-auto custom-scrollbar prose prose-invert prose-xs max-w-none"
+                            dangerouslySetInnerHTML={{ __html: email.htmlBody }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="text-xs text-neutral-400 bg-neutral-950 p-3 rounded line-clamp-4 whitespace-pre-wrap">
+                          {email.body.replace(/<[^>]*>?/gm, '')}
+                        </div>
+                      )}
 
                       <div className="mt-3 pt-3 border-t border-neutral-800 flex justify-between items-center text-[10px] text-neutral-500 font-mono">
                         <div>ID: {email.resendId || 'N/A'}</div>
                         <div className="flex gap-3">
                           {email.deliveredAt && <span>Delivered: {new Date(email.deliveredAt).toLocaleTimeString('es-CL')}</span>}
-                          {email.openedAt && <span className="text-purple-400">Opened: {new Date(email.openedAt).toLocaleTimeString('es-CL')}</span>}
+                          {email.openedAt && <span className="text-[#ea580c]">Opened: {new Date(email.openedAt).toLocaleTimeString('es-CL')}</span>}
                         </div>
                       </div>
                     </div>

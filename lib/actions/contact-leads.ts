@@ -4,9 +4,10 @@ import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { headers } from 'next/headers'
-import { notifyNewLeadCreated } from '@/lib/email/lead-notifications'
+
 import { validateAdminAccess } from '@/lib/admin/permissions'
 import { LeadStatus, LeadPriority, LeadPipelineStage, LeadActivityType } from '@prisma/client'
+import { anonymizeIp } from '@/lib/security/anonymize-ip'
 
 const contactLeadSchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres").max(80, "El nombre es muy largo"),
@@ -66,7 +67,8 @@ export async function createContactLead(formData: FormData) {
     if (!success) return { success: false, error: 'Datos de formulario inválidos.' }
 
     const headersList = await headers();
-    const ipAddress = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown';
+    const rawIpAddress = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown';
+    const ipAddress = anonymizeIp(rawIpAddress) || 'unknown';
     const userAgent = headersList.get('user-agent') || 'unknown';
 
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);

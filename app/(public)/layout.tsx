@@ -1,9 +1,11 @@
 import { getSiteConfig } from '@/lib/site/get-site-config';
 import { getMainCtaConfig } from '@/lib/site/get-main-cta';
+import { getActivePopup } from '@/lib/actions/popup';
 import { Navbar } from '@/components/site/navbar';
 import { Footer } from '@/components/site/footer';
 import { FloatingCTAWrapper } from '@/components/site/floating-cta';
 import { MainCtaWrapper } from '@/components/site/main-cta-wrapper';
+import { CommercialPopupClient } from '@/components/site/commercial-popup-client';
 import { Inter } from 'next/font/google';
 import { Suspense } from 'react';
 import { AnalyticsTracker } from '@/components/site/analytics-tracker';
@@ -32,6 +34,15 @@ export default async function PublicLayout({ children }: { children: React.React
   const { config, activeFlags } = await getSiteConfig();
   const mainCtaConfig = await getMainCtaConfig();
 
+  const showPopup = activeFlags.includes('popup_promocional');
+  const popup = showPopup ? await getActivePopup() : null;
+
+  const now = new Date();
+
+  const validPopup = popup && popup.isActive && popup.title?.trim() !== '' &&
+    (!popup.startsAt || new Date(popup.startsAt) <= now) &&
+    (!popup.endsAt || new Date(popup.endsAt) >= now);
+
   return (
     <>
       <Navbar 
@@ -57,6 +68,17 @@ export default async function PublicLayout({ children }: { children: React.React
         devSignature={config?.devSignature}
         devSignatureUrl={config?.devSignatureUrl}
       />
+      {validPopup && (
+        <CommercialPopupClient 
+          title={popup.title}
+          text={popup.text}
+          buttonText={popup.buttonText}
+          url={popup.url}
+          imageUrl={popup.imageUrl}
+          isActive={true}
+        />
+      )}
     </>
   );
 }
+

@@ -4,9 +4,18 @@ import { resend } from './resend-client';
 import { LeadConfirmationEmail } from '@/emails/lead-confirmation-email';
 import { InternalNewLeadEmail } from '@/emails/internal-new-lead-email';
 
+import { createLeadReplyHtml } from './templates/lead-reply-template';
+
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'contacto@tudominio.cl';
 const INTERNAL_EMAIL = process.env.RESEND_INTERNAL_TO_EMAIL || 'serviciosjess@gmail.com';
 const REPLY_TO = process.env.RESEND_REPLY_TO_EMAIL || 'serviciosjess@gmail.com';
+const SITE_URL = process.env.SITE_URL || 'https://serviciosjess.cl';
+
+import { 
+  ensureLeadInboundCode, 
+  ensureSubjectHasLeadCode, 
+  buildInboundReplyTo 
+} from './inbound-utils';
 
 export async function sendLeadConfirmationEmail(lead: any) {
   if (!resend) return { success: false, error: 'Resend no está configurado.' };
@@ -25,15 +34,36 @@ export async function sendLeadConfirmationEmail(lead: any) {
     });
 
     if (error) {
-      await logEmailRecord(lead.id, 'OUTBOUND', 'Recibimos tu solicitud | Servicios Jess', 'FAILED', error.message, lead.email);
+      await logEmailRecord({
+        leadId: lead.id, 
+        direction: 'OUTBOUND', 
+        subject: 'Recibimos tu solicitud | Servicios Jess', 
+        status: 'FAILED', 
+        error: error.message, 
+        toEmail: lead.email
+      });
       return { success: false, error: error.message };
     }
 
-    await logEmailRecord(lead.id, 'OUTBOUND', 'Recibimos tu solicitud | Servicios Jess', 'SENT', null, lead.email, data?.id);
+    await logEmailRecord({
+      leadId: lead.id, 
+      direction: 'OUTBOUND', 
+      subject: 'Recibimos tu solicitud | Servicios Jess', 
+      status: 'SENT', 
+      toEmail: lead.email, 
+      resendId: data?.id
+    });
     await logActivity(lead.id, 'Correo de confirmación automático enviado al cliente.');
     return { success: true, id: data?.id };
   } catch (err: any) {
-    await logEmailRecord(lead.id, 'OUTBOUND', 'Recibimos tu solicitud | Servicios Jess', 'FAILED', err.message, lead.email);
+    await logEmailRecord({
+      leadId: lead.id, 
+      direction: 'OUTBOUND', 
+      subject: 'Recibimos tu solicitud | Servicios Jess', 
+      status: 'FAILED', 
+      error: err.message, 
+      toEmail: lead.email
+    });
     return { success: false, error: err.message };
   }
 }
@@ -62,42 +92,92 @@ export async function sendInternalNewLeadNotification(lead: any) {
     });
 
     if (error) {
-      await logEmailRecord(lead.id, 'INTERNAL', 'Nuevo lead comercial desde la web', 'FAILED', error.message, INTERNAL_EMAIL);
+      await logEmailRecord({
+        leadId: lead.id, 
+        direction: 'INTERNAL', 
+        subject: 'Nuevo lead comercial desde la web', 
+        status: 'FAILED', 
+        error: error.message, 
+        toEmail: INTERNAL_EMAIL
+      });
       return { success: false, error: error.message };
     }
 
-    await logEmailRecord(lead.id, 'INTERNAL', 'Nuevo lead comercial desde la web', 'SENT', null, INTERNAL_EMAIL, data?.id);
+    await logEmailRecord({
+      leadId: lead.id, 
+      direction: 'INTERNAL', 
+      subject: 'Nuevo lead comercial desde la web', 
+      status: 'SENT', 
+      toEmail: INTERNAL_EMAIL, 
+      resendId: data?.id
+    });
     await logActivity(lead.id, 'Notificación interna enviada a Servicios Jess.');
     return { success: true, id: data?.id };
   } catch (err: any) {
-    await logEmailRecord(lead.id, 'INTERNAL', 'Nuevo lead comercial desde la web', 'FAILED', err.message, INTERNAL_EMAIL);
+    await logEmailRecord({
+      leadId: lead.id, 
+      direction: 'INTERNAL', 
+      subject: 'Nuevo lead comercial desde la web', 
+      status: 'FAILED', 
+      error: err.message, 
+      toEmail: INTERNAL_EMAIL
+    });
     return { success: false, error: err.message };
   }
 }
 
 export async function sendLeadManualReply({ leadId, subject, body }: { leadId: string, subject: string, body: string }) {
   if (!resend) return { success: false, error: 'Resend no está configurado.' };
+  if (!body?.trim() || !subject?.trim()) return { success: false, error: 'Asunto y mensaje son requeridos.' };
 
   const lead = await prisma.lead.findUnique({ where: { id: leadId } });
   if (!lead) return { success: false, error: 'Lead no encontrado.' };
   if (!lead.email) return { success: false, error: 'El lead no tiene email.' };
 
   try {
+    const inboundCode = await ensureLeadInboundCode(lead.id);
+    const taggedSubject = ensureSubjectHasLeadCode(subject, inboundCode);
+    const inboundReplyTo = buildInboundReplyTo(inboundCode);
+
+    const htmlContent = createLeadReplyHtml({
+      name: lead.name || 'Cliente',
+      subject: taggedSubject,
+      message: body,
+      siteUrl: SITE_URL,
+    });
+
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: lead.email,
-      replyTo: REPLY_TO,
-      subject: subject,
-      html: body.replace(/\n/g, '<br />'), // Simple text-to-html conversion for manual replies
+      replyTo: inboundReplyTo || REPLY_TO,
+      subject: taggedSubject,
+      html: htmlContent,
+      text: `Hola ${lead.name || 'Cliente'},\n\n${body}\n\nServicios Jess SpA\nFabricantes de gomas industriales, plásticos de ingeniería y soluciones de maestranza.`,
     });
 
     if (error) {
-      await logEmailRecord(lead.id, 'OUTBOUND', subject, 'FAILED', error.message, lead.email, null, body);
+      await logEmailRecord({
+        leadId: lead.id, 
+        direction: 'OUTBOUND', 
+        subject: taggedSubject, 
+        status: 'FAILED', 
+        error: error.message, 
+        toEmail: lead.email,
+        bodyText: body
+      });
       return { success: false, error: error.message };
     }
 
-    await logEmailRecord(lead.id, 'OUTBOUND', subject, 'SENT', null, lead.email, data?.id, body);
-    await logActivity(lead.id, `Respuesta manual enviada: "${subject}"`);
+    await logEmailRecord({
+      leadId: lead.id, 
+      direction: 'OUTBOUND', 
+      subject: taggedSubject, 
+      status: 'SENT', 
+      toEmail: lead.email, 
+      resendId: data?.id, 
+      bodyText: body
+    });
+    await logActivity(lead.id, `Respuesta manual enviada: "${taggedSubject}"`);
     
     // Update lead contact info
     await prisma.lead.update({
@@ -110,13 +190,55 @@ export async function sendLeadManualReply({ leadId, subject, body }: { leadId: s
 
     return { success: true, id: data?.id };
   } catch (err: any) {
-    await logEmailRecord(lead.id, 'OUTBOUND', subject, 'FAILED', err.message, lead.email, null, body);
+    await logEmailRecord({
+      leadId: lead.id, 
+      direction: 'OUTBOUND', 
+      subject: subject, 
+      status: 'FAILED', 
+      error: err.message, 
+      toEmail: lead.email || 'unknown',
+      bodyText: body
+    });
     return { success: false, error: err.message };
   }
 }
 
+
 // Helpers
-async function logEmailRecord(leadId: string, direction: string, subject: string, status: string, error: string | null, toEmail: string, resendId?: string | null, bodyText?: string) {
+// Helpers
+export async function logEmailRecord({
+  leadId,
+  direction,
+  subject,
+  status,
+  error,
+  toEmail,
+  fromEmail,
+  replyTo,
+  resendId,
+  bodyText,
+  htmlBody,
+  provider = 'resend',
+  providerMessageId,
+  providerThreadId,
+  receivedAt
+}: {
+  leadId: string;
+  direction: string;
+  subject: string;
+  status: string;
+  error?: string | null;
+  toEmail: string;
+  fromEmail?: string | null;
+  replyTo?: string | null;
+  resendId?: string | null;
+  bodyText?: string;
+  htmlBody?: string | null;
+  provider?: string;
+  providerMessageId?: string | null;
+  providerThreadId?: string | null;
+  receivedAt?: Date | null;
+}) {
   try {
     await prisma.leadEmail.create({
       data: {
@@ -124,13 +246,18 @@ async function logEmailRecord(leadId: string, direction: string, subject: string
         direction,
         subject,
         body: bodyText || '[Contenido automático]',
+        htmlBody,
         toEmail,
-        fromEmail: FROM_EMAIL,
-        replyTo: REPLY_TO,
+        fromEmail: fromEmail || FROM_EMAIL,
+        replyTo: replyTo || REPLY_TO,
         status,
         error,
         resendId,
-        sentAt: status === 'SENT' ? new Date() : null,
+        provider,
+        providerMessageId,
+        providerThreadId,
+        receivedAt,
+        sentAt: direction === 'OUTBOUND' && status === 'SENT' ? new Date() : null,
       }
     });
   } catch (e) {
@@ -138,16 +265,19 @@ async function logEmailRecord(leadId: string, direction: string, subject: string
   }
 }
 
-async function logActivity(leadId: string, title: string) {
+export async function logActivity(leadId: string, title: string, type: any = 'CONTACTED', note?: string) {
   try {
     await prisma.leadActivity.create({
       data: {
         leadId,
-        type: 'CONTACTED',
+        type,
         title,
+        note,
       }
     });
   } catch (e) {
     console.error('Error logging lead activity:', e);
   }
 }
+
+// Redundant helpers removed. Use ./templates/utils.ts if needed.

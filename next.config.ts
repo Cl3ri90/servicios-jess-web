@@ -20,8 +20,22 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // 3. Tus encabezados de seguridad existentes (intactos)
+  // 3. Tus encabezados de seguridad existentes (intactos) + CSP
   async headers() {
+    const cspHeader = `
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in;
+      font-src 'self' data:;
+      connect-src 'self' https://*.supabase.co https://*.supabase.in https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com;
+      frame-src 'self' https://www.google.com https://maps.google.com;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+    `.replace(/\n/g, '').replace(/\s{2,}/g, ' ').trim();
+
     return [
       {
         source: '/(.*)',
@@ -31,7 +45,9 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' }
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          // TODO: Mover a Content-Security-Policy después de QA y validar remover unsafe-inline/unsafe-eval
+          { key: 'Content-Security-Policy', value: cspHeader }
         ]
       }
     ];

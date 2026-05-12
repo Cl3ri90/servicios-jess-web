@@ -21,7 +21,6 @@ export async function requireAuthTenant() {
   const compatibilityMap: Record<string, string> = {
     'seo_manager': 'enableSeoManager',
     'popup_promocional': 'enablePromoPopup',
-    'barra_anuncio': 'enableAnnouncementBar',
     'cta_flotante': 'enableStickyCTA',
     'portafolio': 'enablePortfolio',
     'capacidades': 'enableCapabilities',

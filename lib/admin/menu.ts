@@ -18,7 +18,6 @@ const allLinks: AdminMenuLink[] = [
   { label: 'Indicadores KPI', href: '/admin/owner/metricas', icon: 'activity', flagKey: 'indicadores' },
   { label: 'SEO Core', href: '/admin/developer/seo', icon: 'search', developerOnly: true },
   { label: 'Llamada de Acción', href: '/admin/owner/llamada-accion', icon: 'zap', flagKey: 'cta_principal' },
-  { label: 'Anuncio Emergencia', href: '/admin/owner/anuncio', icon: 'megaphone', flagKey: 'barra_anuncio' },
   { label: 'Pop-Up Comercial', href: '/admin/owner/popup', icon: 'message-square', flagKey: 'popup_promocional' },
   { label: 'Bandeja de Leads', href: '/admin/owner/leads', icon: 'inbox' },
   { label: 'Catálogo de Fichas', href: '/admin/developer/catalogo-fichas', icon: 'file-text', flagKey: 'fichas_tecnicas', developerOnly: true },

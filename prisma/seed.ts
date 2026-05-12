@@ -21,7 +21,6 @@ async function main() {
     { key: 'trust', name: 'Empresas que confían', isActive: false, ownerVisible: true, ownerEditable: false, publicVisible: true },
     { key: 'indicadores', name: 'KPIs Mantenimiento', isActive: false, ownerVisible: true, ownerEditable: false, publicVisible: true },
     { key: 'seo_manager', name: 'SEO Core', isActive: true, ownerVisible: false, ownerEditable: false, publicVisible: false },
-    { key: 'barra_anuncio', name: 'Anuncio Emergencia', isActive: false, ownerVisible: false, ownerEditable: false, publicVisible: true },
     { key: 'popup_promocional', name: 'Pop-Up Comercial', isActive: false, ownerVisible: false, ownerEditable: false, publicVisible: true },
     { key: 'cta_flotante', name: 'Botón Flotante CTA', isActive: true, ownerVisible: false, ownerEditable: false, publicVisible: true },
     { key: 'cta_principal', name: 'Llamada de Acción', isActive: true, ownerVisible: true, ownerEditable: true, publicVisible: true }
