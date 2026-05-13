@@ -10,7 +10,10 @@ export async function getPublicKpis() {
   }
 
   const metrics = await prisma.metric.findMany({
-    orderBy: { order: 'asc' }
+    orderBy: [
+      { order: 'asc' },
+      { createdAt: 'asc' }
+    ]
   });
 
   return {

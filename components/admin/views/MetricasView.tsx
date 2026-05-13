@@ -1,15 +1,17 @@
-import { prisma } from '@/lib/db/prisma'
 import { MetricForm, DeleteMetricButton } from '@/components/admin/MetricForm'
 import { getModuleFlag } from '@/lib/site/get-module-flag'
 import { KpiSection } from '@/components/site/kpi-section'
+import Link from 'next/link'
 
-export default async function MetricasView({ tenantId }: { tenantId: string }) {
-  // @ts-ignore
-  const metricas = await prisma.metric.findMany({
-    where: { tenantId },
-    orderBy: { order: 'asc' }
-  })
-
+export default async function MetricasView({ 
+  tenantId, 
+  initialMetrics,
+  activeMetric
+}: { 
+  tenantId: string;
+  initialMetrics: any[];
+  activeMetric?: any;
+}) {
   const flag = await getModuleFlag('indicadores');
 
   return (
@@ -19,7 +21,7 @@ export default async function MetricasView({ tenantId }: { tenantId: string }) {
         <p className="text-neutral-400 mt-2">Controla los hitos numéricos proyectados en la banda del Home.</p>
       </div>
 
-      {(!flag.isActive || !flag.renderPublic || metricas.length === 0) && (
+      {(!flag.isActive || !flag.renderPublic || initialMetrics.length === 0) && (
         <div className="mb-8 p-4 bg-orange-950/30 border border-orange-900/50 rounded-lg">
           <h4 className="text-orange-500 font-bold mb-2 flex items-center gap-2">
             <span className="text-lg">⚠</span> Estado de Publicación
@@ -27,14 +29,16 @@ export default async function MetricasView({ tenantId }: { tenantId: string }) {
           <ul className="text-orange-400/80 text-sm list-disc pl-5 space-y-1">
             {!flag.isActive && <li>El motor principal del módulo está apagado.</li>}
             {!flag.renderPublic && <li>"Renderizar Público (Frontend)" está desactivado.</li>}
-            {metricas.length === 0 && <li>La sección no se mostrará en la web mientras no existan registros activos.</li>}
+            {initialMetrics.length === 0 && <li>La sección no se mostrará en la web mientras no existan registros activos.</li>}
           </ul>
         </div>
       )}
 
-      <MetricForm tenantId={tenantId} />
+      <div id="kpi-form-section">
+        <MetricForm tenantId={tenantId} initialData={activeMetric} />
+      </div>
 
-      {metricas.length > 0 && (
+      {initialMetrics.length > 0 && (
         <>
           <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-6 border-b border-neutral-800 pb-2 border-t mt-12 pt-8">
             Live Preview Pública
@@ -44,7 +48,7 @@ export default async function MetricasView({ tenantId }: { tenantId: string }) {
                Vista previa interactiva
             </div>
             <div className="pt-10 bg-black">
-              <KpiSection metrics={metricas} />
+              <KpiSection metrics={initialMetrics} />
             </div>
           </div>
         </>
@@ -62,17 +66,26 @@ export default async function MetricasView({ tenantId }: { tenantId: string }) {
               </tr>
            </thead>
            <tbody>
-              {metricas.map((m: any) => (
+              {initialMetrics.map((m: any) => (
                 <tr key={m.id} className="border-b border-neutral-800 hover:bg-neutral-800/50 transition-colors">
                    <td className="px-6 py-4 font-mono text-xs">{m.order}</td>
                    <td className="px-6 py-4 font-black text-orange-500 text-lg">{m.value}</td>
                    <td className="px-6 py-4 font-bold text-white uppercase tracking-widest text-xs">{m.label}</td>
                    <td className="px-6 py-4 text-right">
-                      <DeleteMetricButton id={m.id} />
+                      <div className="flex items-center justify-end gap-3">
+                        <Link 
+                          href={`?edit=${m.id}#kpi-form-section`}
+                          className="text-orange-500 hover:text-orange-400 transition-colors text-xs font-bold uppercase tracking-widest"
+                        >
+                          Editar
+                        </Link>
+                        <span className="text-neutral-800">|</span>
+                        <DeleteMetricButton id={m.id} />
+                      </div>
                    </td>
                 </tr>
               ))}
-              {metricas.length === 0 && (
+              {initialMetrics.length === 0 && (
                 <tr>
                    <td colSpan={4} className="px-6 py-8 text-center text-neutral-500 font-light">
                      No hay indicadores.

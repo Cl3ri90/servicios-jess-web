@@ -17,9 +17,9 @@ export async function createMetric(formData: FormData) {
     await validateAdminAccess("OWNER");
 
     const rawData = {
-      value: formData.get('value') as string,
-      label: formData.get('label') as string,
-      description: formData.get('description') as string | null,
+      value: (formData.get('value') as string)?.trim(),
+      label: (formData.get('label') as string)?.trim(),
+      description: (formData.get('description') as string | null)?.trim() || null,
       order: formData.get('order') || 0,
     }
     const validData = metricSchema.parse(rawData)
@@ -34,6 +34,32 @@ export async function createMetric(formData: FormData) {
   } catch (err: any) {
     console.error(err)
     return { success: false, error: err.message || 'Error validando métrica.' }
+  }
+}
+
+export async function updateMetric(id: string, formData: FormData) {
+  try {
+    await validateAdminAccess("OWNER");
+
+    const rawData = {
+      value: (formData.get('value') as string)?.trim(),
+      label: (formData.get('label') as string)?.trim(),
+      description: (formData.get('description') as string | null)?.trim() || null,
+      order: formData.get('order') || 0,
+    }
+    const validData = metricSchema.parse(rawData)
+
+    await prisma.metric.update({
+      where: { id },
+      data: validData
+    })
+
+    revalidatePath('/admin/owner/metricas')
+    revalidatePath('/')
+    return { success: true, message: 'Métrica actualizada exitosamente.' }
+  } catch (err: any) {
+    console.error(err)
+    return { success: false, error: err.message || 'Error actualizando métrica.' }
   }
 }
 

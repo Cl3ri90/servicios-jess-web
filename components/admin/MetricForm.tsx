@@ -1,32 +1,54 @@
 'use client'
 
 import { useState, useTransition, useEffect } from 'react'
-import { createMetric, deleteMetric } from '@/lib/actions/metrics'
+import { createMetric, deleteMetric, updateMetric } from '@/lib/actions/metrics'
 import { LivePreviewShell } from '@/components/admin/live-preview-shell'
 import { DirtySaveBtn } from '@/components/admin/dirty-save-btn'
 import { KpiCard } from '@/components/site/kpi-card'
+import { useRouter } from 'next/navigation'
 
-export function MetricForm({ tenantId }: { tenantId?: string }) {
+export function MetricForm({ tenantId, initialData }: { tenantId?: string, initialData?: any }) {
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+  const router = useRouter()
 
   const [formState, setFormState] = useState({
-    value: '',
-    label: '',
-    order: 0,
-    description: ''
+    value: initialData?.value || '',
+    label: initialData?.label || '',
+    order: initialData?.order || 0,
+    description: initialData?.description || ''
   })
 
   const [isDirty, setIsDirty] = useState(false)
 
   useEffect(() => {
-    const dirty = formState.value !== '' || formState.label !== '' || formState.order !== 0 || formState.description !== '';
+    if (initialData) {
+      setFormState({
+        value: initialData.value || '',
+        label: initialData.label || '',
+        order: initialData.order || 0,
+        description: initialData.description || ''
+      })
+    }
+  }, [initialData])
+
+  useEffect(() => {
+    const dirty = initialData 
+      ? formState.value !== initialData.value || formState.label !== initialData.label || formState.order !== initialData.order || formState.description !== initialData.description
+      : formState.value !== '' || formState.label !== '' || formState.order !== 0 || formState.description !== '';
     setIsDirty(dirty);
-  }, [formState])
+  }, [formState, initialData])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormState(prev => ({ ...prev, [name]: value }));
+  }
+
+  const handleCancel = () => {
+    router.push('?', { scroll: false })
+    if (!initialData) {
+      setFormState({ value: '', label: '', order: 0, description: '' })
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,14 +59,24 @@ export function MetricForm({ tenantId }: { tenantId?: string }) {
     
     startTransition(async () => {
       try {
-        const res = await createMetric(formData)
+        const res = initialData 
+          ? await updateMetric(initialData.id, formData)
+          : await createMetric(formData)
+
         if (res.error) setMessage({ type: 'error', text: res.error })
         if (res.success) {
           setMessage({ type: 'success', text: res.message! })
           setIsDirty(false)
-          const form = e.target as HTMLFormElement
-          form.reset()
-          setFormState({ value: '', label: '', order: 0, description: '' })
+          
+          if (!initialData) {
+            const form = e.target as HTMLFormElement
+            form.reset()
+            setFormState({ value: '', label: '', order: 0, description: '' })
+          } else {
+             // If editing, we might want to stay or go back. The revalidatePath will update the list.
+             // Clearing the edit param will reset the form via the parent component's key or prop change.
+             router.push('?', { scroll: false })
+          }
         }
       } catch (err) {
         setMessage({ type: 'error', text: 'Error fatal de sistema.' })
@@ -52,10 +84,14 @@ export function MetricForm({ tenantId }: { tenantId?: string }) {
     })
   }
 
+  const isEditing = !!initialData;
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 mb-10 relative">
       <form id="metric-form" onSubmit={handleSubmit} className="bg-neutral-900 border border-neutral-800 p-8 rounded-lg shadow-xl relative order-2 lg:order-1">
-        <h3 className="text-xl font-bold uppercase tracking-widest text-[#ea580c] mb-6 border-b border-neutral-800 pb-2">Crear Métrica</h3>
+        <h3 className="text-xl font-bold uppercase tracking-widest text-[#ea580c] mb-6 border-b border-neutral-800 pb-2">
+          {isEditing ? 'Editar Métrica' : 'Crear Métrica'}
+        </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -82,14 +118,23 @@ export function MetricForm({ tenantId }: { tenantId?: string }) {
           </div>
         )}
 
-        <div className="pt-8">
+        <div className="pt-8 flex flex-col md:flex-row gap-4">
           <DirtySaveBtn 
             isDirty={isDirty} 
             isSaving={isPending} 
             form="metric-form" 
-            label="Guardar KPI" 
-            className="w-full"
+            label={isEditing ? "Actualizar KPI" : "Guardar KPI"} 
+            className="flex-1"
           />
+          {(isEditing || isDirty) && (
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="px-6 py-2 border border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors rounded font-bold text-sm uppercase tracking-widest"
+            >
+              Cancelar
+            </button>
+          )}
         </div>
       </form>
 

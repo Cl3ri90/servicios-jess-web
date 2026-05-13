@@ -9,6 +9,7 @@ import { CommercialPopupClient } from '@/components/site/commercial-popup-client
 import { Inter } from 'next/font/google';
 import { Suspense } from 'react';
 import { AnalyticsTracker } from '@/components/site/analytics-tracker';
+import { BackToTopButton } from '@/components/site/BackToTopButton';
 import '@/app/globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -58,6 +59,7 @@ export default async function PublicLayout({ children }: { children: React.React
       </main>
       <MainCtaWrapper config={mainCtaConfig} activeFlags={activeFlags} disableOnHome={true} />
       <FloatingCTAWrapper />
+      <BackToTopButton />
       <Footer 
         brandName={config?.name || 'SERVICIOS JESS'}
         email={config?.contactEmail || null}
