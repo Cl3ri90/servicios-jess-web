@@ -84,11 +84,11 @@ export function Footer({ brandName, email, phone, address, logoUrl, description,
                </p>
              )}
            </div>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link href="/politicas-de-privacidad" className="hover:text-neutral-400 tracking-widest uppercase text-[10px]">Políticas de Privacidad</Link>
-              <Link href="/terminos-comerciales" className="hover:text-neutral-400 tracking-widest uppercase text-[10px]">Términos Comerciales</Link>
-             <Link href="/admin" className="hover:text-[#ea580c] ml-4 border-l border-neutral-800 pl-4 py-1 tracking-widest uppercase text-[10px] font-bold">Portal Admin</Link>
-           </div>
+             <div className="flex flex-wrap items-center justify-center gap-4">
+               <Link href="/politicas-de-privacidad" className="hover:text-neutral-400 tracking-widest uppercase text-[10px]">Políticas de Privacidad</Link>
+               <Link href="/terminos-comerciales" className="hover:text-neutral-400 tracking-widest uppercase text-[10px]">Términos Comerciales</Link>
+              <Link href="/admin" rel="nofollow noindex noopener noreferrer" className="hover:text-[#ea580c] ml-4 border-l border-neutral-800 pl-4 py-1 tracking-widest uppercase text-[10px] font-bold">Portal Admin</Link>
+            </div>
         </div>
       </div>
     </footer>

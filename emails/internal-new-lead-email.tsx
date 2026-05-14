@@ -40,7 +40,7 @@ export const InternalNewLeadEmail = ({
   const crmLink = `${siteUrl}/admin/owner/leads`;
 
   return (
-    <EmailLayout 
+    <EmailLayout
       previewText="Nuevo lead comercial recibido desde el sitio web"
       logoUrl={logoUrl}
       siteUrl={siteUrl}

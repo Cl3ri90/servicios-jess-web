@@ -49,6 +49,24 @@ const nextConfig: NextConfig = {
           // TODO: Mover a Content-Security-Policy después de QA y validar remover unsafe-inline/unsafe-eval
           { key: 'Content-Security-Policy', value: cspHeader }
         ]
+      },
+      {
+        source: "/admin/:path*",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, noarchive, nosnippet",
+          },
+        ],
+      },
+      {
+        source: "/login",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, noarchive, nosnippet",
+          },
+        ],
       }
     ];
   }

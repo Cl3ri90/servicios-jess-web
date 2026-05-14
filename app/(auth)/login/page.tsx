@@ -2,8 +2,19 @@ import { getSiteConfig } from '@/lib/site/get-site-config';
 import { LoginForm } from '@/components/auth/login-form';
 
 export const metadata = {
-  title: 'Acceso Restringido | Sistema de Gestión',
-  description: 'Portal de administración y control operativo.',
+  title: 'Ingreso al Sistema',
+  description: 'Acceso privado.',
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+      nocache: true,
+    },
+  },
 };
 
 export default async function LoginPage() {
