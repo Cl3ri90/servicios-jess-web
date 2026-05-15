@@ -15,10 +15,24 @@ import '@/app/globals.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export async function generateMetadata() {
-  const { config } = await getSiteConfig();
+  const { config, seo } = await getSiteConfig();
   
-  const title = config?.metaTitle || config?.name || 'Servicios Jess';
-  const description = config?.metaDescription || 'Ingeniería y soluciones industriales de alto nivel.';
+  // Lógica de Prioridad para Título
+  const title = 
+    seo?.pages?.inicio?.title || 
+    config?.metaTitle || 
+    seo?.global?.siteTitle || 
+    'Servicios Jess | Gomas industriales, plásticos de ingeniería y maestranza';
+
+  // Lógica de Prioridad para Descripción
+  const description = 
+    seo?.pages?.inicio?.description || 
+    config?.metaDescription || 
+    seo?.global?.description || 
+    'Expertos en gomas industriales, plásticos de ingeniería y maestranza. Fabricamos soluciones técnicas a medida para empresas e industrias.';
+
+  // Título compacto para Redes Sociales (OG / Twitter)
+  const socialTitle = seo?.pages?.inicio?.ogTitle || (title.length > 60 ? 'Servicios Jess | Soluciones Industriales' : title);
 
   return {
     metadataBase: new URL('https://www.serviciosjess.cl'),
@@ -28,16 +42,18 @@ export async function generateMetadata() {
     },
     description: description,
     openGraph: {
-      title,
-      description,
+      title: socialTitle,
+      description: description,
       url: 'https://www.serviciosjess.cl',
       siteName: config?.name || 'Servicios Jess',
       type: 'website',
+      images: config?.logoUrl ? [{ url: config.logoUrl }] : [],
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: socialTitle,
+      description: description,
+      images: config?.logoUrl ? [config.logoUrl] : [],
     },
     icons: {
       icon: config?.faviconUrl || '/favicon.ico',
@@ -48,7 +64,14 @@ export async function generateMetadata() {
 }
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const { config, activeFlags } = await getSiteConfig();
+  const { config, seo, activeFlags } = await getSiteConfig();
+  
+  const description = 
+    seo?.pages?.inicio?.description || 
+    config?.metaDescription || 
+    seo?.global?.description || 
+    'Expertos en gomas industriales, plásticos de ingeniería y maestranza. Fabricamos soluciones técnicas a medida para empresas e industrias.';
+
   const mainCtaConfig = await getMainCtaConfig();
 
   const showPopup = activeFlags.includes('popup_promocional');
@@ -60,8 +83,33 @@ export default async function PublicLayout({ children }: { children: React.React
     (!popup.startsAt || new Date(popup.startsAt) <= now) &&
     (!popup.endsAt || new Date(popup.endsAt) >= now);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": config?.name || "Servicios Jess SpA",
+    "url": "https://www.serviciosjess.cl",
+    "logo": config?.logoUrl || "",
+    "description": description,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": config?.contactAddress || "Calle 5 de abril N 357 Arenas del Bío Bío",
+      "addressLocality": "Concepción",
+      "addressCountry": "CL"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": config?.contactPhone || "",
+      "contactType": "customer service",
+      "email": config?.contactEmail || "serviciosjess@gmail.com"
+    }
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar 
         brandName={config?.name || 'SERVICIOS JESS'} 
         logoUrl={config?.logoUrl}

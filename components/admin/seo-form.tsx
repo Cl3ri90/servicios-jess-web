@@ -41,8 +41,11 @@ export function SeoForm({ seo, pageKeys }: { seo: any, pageKeys: string[] }) {
             <input name="global_siteTitle" className={inputClass} defaultValue={seo.global.siteTitle || ''} placeholder="Mi Empresa SpA" />
           </div>
           <div>
-            <label className={labelClass}>Palabras clave (keywords)</label>
+            <label className={labelClass}>Términos objetivo SEO (Palabras clave)</label>
             <input name="global_keywords" className={inputClass} defaultValue={seo.global.keywords || ''} placeholder="metalmecánica, chile, industria" />
+            <p className="text-[10px] text-neutral-500 mt-1">
+              Google ignora las meta keywords para el ranking. Usa estos términos para orientar tus títulos y descripciones.
+            </p>
           </div>
           <div className="md:col-span-2">
             <label className={labelClass}>Descripción global</label>

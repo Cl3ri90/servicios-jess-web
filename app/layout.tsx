@@ -8,6 +8,7 @@ import { getSiteConfig } from '@/lib/site/get-site-config';
 export async function generateMetadata() {
   const { config } = await getSiteConfig();
   return {
+    metadataBase: new URL('https://www.serviciosjess.cl'),
     title: config?.metaTitle || config?.name || 'Servicios Jess | Gomas industriales, plásticos de ingeniería y maestranza',
     description: config?.metaDescription || 'Expertos en gomas industriales, plásticos de ingeniería y maestranza. Fabricamos soluciones técnicas a medida para empresas e industrias.',
   };

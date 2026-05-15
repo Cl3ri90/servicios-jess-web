@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
 import { unstable_cache } from 'next/cache';
+import { getSeoConfig } from '@/lib/actions/seo';
 
 export const getSiteConfig = unstable_cache(
   async () => {
@@ -14,6 +15,8 @@ export const getSiteConfig = unstable_cache(
       where: { isActive: true, publicVisible: true },
       select: { key: true }
     });
+    const seo = await getSeoConfig();
+
     const fallbackConfig = {
       ...config,
       name: config?.name || 'Servicios Jess',
@@ -30,6 +33,7 @@ export const getSiteConfig = unstable_cache(
 
     return {
       config: fallbackConfig,
+      seo: seo,
       activeFlags: flags.map((f: { key: string }) => f.key)
     };
   },
