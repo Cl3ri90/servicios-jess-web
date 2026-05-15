@@ -37,6 +37,8 @@ const DEFAULT_SETTINGS = {
   showClients: true,
   showMetrics: true,
   showIndustrialCTA: true,
+  metaTitle: 'Servicios Jess | Gomas industriales, plásticos de ingeniería y maestranza',
+  metaDescription: 'Expertos en gomas industriales, plásticos de ingeniería y maestranza. Fabricamos soluciones técnicas a medida para empresas e industrias.',
 }
 
 export type SiteSettings = typeof DEFAULT_SETTINGS
@@ -82,6 +84,8 @@ export async function getGlobalSettings(): Promise<SiteSettings> {
       showClients: record.showClients ?? defaultBase.showClients,
       showMetrics: record.showMetrics ?? defaultBase.showMetrics,
       showIndustrialCTA: record.showIndustrialCTA ?? defaultBase.showIndustrialCTA,
+      metaTitle: record.metaTitle || defaultBase.metaTitle,
+      metaDescription: record.metaDescription || defaultBase.metaDescription,
     }
   } catch (error) {
     console.warn('Error cargando configuración, usando valores por defecto')
@@ -153,6 +157,8 @@ export async function updateGlobalSettings(formData: FormData) {
       showClients: formData.get('showClients') === 'on' || formData.get('showClients') === 'true',
       showMetrics: formData.get('showMetrics') === 'on' || formData.get('showMetrics') === 'true',
       showIndustrialCTA: formData.get('showIndustrialCTA') === 'on' || formData.get('showIndustrialCTA') === 'true',
+      metaTitle: formData.get('metaTitle') as string || DEFAULT_SETTINGS.metaTitle,
+      metaDescription: formData.get('metaDescription') as string || DEFAULT_SETTINGS.metaDescription,
     };
 
     await prisma.siteConfig.upsert({

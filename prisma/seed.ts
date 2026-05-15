@@ -9,7 +9,7 @@ async function main() {
     create: {
       name: 'Servicios Jess',
       primaryColor: '#ea580c',
-      metaTitle: 'Maestranza Industrial y Servicios',
+      metaTitle: 'Servicios Jess | Gomas industriales, plásticos de ingeniería y maestranza',
     },
   });
 

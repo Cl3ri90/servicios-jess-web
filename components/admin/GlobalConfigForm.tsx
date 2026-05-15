@@ -21,6 +21,19 @@ import {
 import { LivePreviewShell } from './live-preview-shell'
 import { DirtySaveBtn } from './dirty-save-btn'
 import { HeroSection } from '../site/hero-section'
+import * as Icons from 'lucide-react'
+
+function CharacterCounter({ current, recommended, max }: { current: number, recommended: number, max: number }) {
+  let colorClass = "text-green-500";
+  if (current > recommended) colorClass = "text-orange-500";
+  if (current > max) colorClass = "text-red-500";
+  
+  return (
+    <span className={`text-[10px] font-mono font-bold tracking-tighter ${colorClass}`}>
+      {current}/{recommended} <span className="opacity-50">({max})</span>
+    </span>
+  );
+}
 
 // Tab definitions (Base)
 const TABS = [
@@ -33,7 +46,7 @@ const TABS = [
 // Mapping fields to tabs for validation indicators
 const TAB_FIELDS: Record<string, string[]> = {
   identidad: ['logoFile', 'faviconFile', 'primaryColor', 'bgColor', 'textColor'],
-  contenido: ['heroTitle', 'heroSubtitle', 'heroBtnText', 'heroBtnLink', 'heroSecBtnText', 'heroSecBtnLink', 'heroBgFile', 'headerText', 'footerText'],
+  contenido: ['heroTitle', 'heroSubtitle', 'heroBtnText', 'heroBtnLink', 'heroSecBtnText', 'heroSecBtnLink', 'heroBgFile', 'headerText', 'footerText', 'metaTitle', 'metaDescription'],
   contacto: ['contactEmail', 'contactPhone', 'whatsappPhone', 'address', 'mapEmbedUrl', 'legalTerms', 'legalPrivacy'],
   avanzado: ['showHero', 'showServices', 'showClients', 'showMetrics', 'showIndustrialCTA', 'devSignature', 'devSignatureUrl', 'maintenance', 'maintenanceText'],
 }
@@ -421,6 +434,81 @@ function ConfigFormContent({
                 <div>
                   <label className="block text-sm font-medium text-neutral-400 mb-2">Descripción Corporativa (Footer)</label>
                   <textarea {...register('footerText')} className="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 h-28" />
+                </div>
+              </div>
+            </div>
+            
+            {/* SEO PARA GOOGLE */}
+            <div className="space-y-6 pt-8 border-t border-neutral-800">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="p-1.5 bg-orange-500/10 rounded text-orange-500">
+                  <Icons.Search className="w-4 h-4" />
+                </div>
+                <h3 className="text-xl font-bold text-white">SEO para Google</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-8">
+                {/* Campos SEO */}
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-end">
+                      <label className="block text-sm font-medium text-neutral-400">Título SEO (meta title)</label>
+                      <CharacterCounter 
+                        current={watch('metaTitle')?.length || 0} 
+                        recommended={60} 
+                        max={70} 
+                      />
+                    </div>
+                    <input 
+                      {...register('metaTitle')} 
+                      placeholder="Servicios Jess | Gomas industriales, plásticos de ingeniería..."
+                      className="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-orange-500 outline-none transition-all" 
+                    />
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                      Recomendado: 50 a 60 caracteres. Es lo que aparecerá como título en Google.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-end">
+                      <label className="block text-sm font-medium text-neutral-400">Descripción SEO (meta description)</label>
+                      <CharacterCounter 
+                        current={watch('metaDescription')?.length || 0} 
+                        recommended={160} 
+                        max={180} 
+                      />
+                    </div>
+                    <textarea 
+                      {...register('metaDescription')} 
+                      placeholder="Expertos en gomas industriales, plásticos de ingeniería y maestranza..."
+                      className="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-orange-500 outline-none transition-all h-24 text-sm" 
+                    />
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">
+                      Recomendado: 140 a 160 caracteres. Aparece debajo del título en los resultados de búsqueda.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Preview Estilo Google */}
+                <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-6 space-y-4 shadow-inner">
+                   <h4 className="text-[10px] uppercase font-black text-neutral-600 tracking-[0.2em] mb-2 flex items-center gap-2">
+                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                     Vista Previa en Buscadores
+                   </h4>
+                   <div className="max-w-[600px] font-sans">
+                      <div className="text-[#9aa0a6] text-sm mb-1 truncate">
+                        https://www.serviciosjess.cl <span className="text-xs ml-1">▼</span>
+                      </div>
+                      <div className="text-[#8ab4f8] text-xl hover:underline cursor-pointer mb-1 leading-tight font-medium">
+                        {watch('metaTitle') || 'Servicios Jess | Título del Sitio'}
+                      </div>
+                      <div className="text-[#bdc1c6] text-sm leading-normal line-clamp-2">
+                        {watch('metaDescription') || 'Esta es una vista previa de cómo aparecerá la descripción de tu sitio en los resultados de búsqueda de Google...'}
+                      </div>
+                   </div>
+                   <p className="text-[9px] text-neutral-700 italic mt-4 font-mono">
+                     * Google puede reescribir títulos y descripciones según la búsqueda del usuario.
+                   </p>
                 </div>
               </div>
             </div>

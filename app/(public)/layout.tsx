@@ -17,12 +17,28 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 export async function generateMetadata() {
   const { config } = await getSiteConfig();
   
+  const title = config?.metaTitle || config?.name || 'Servicios Jess';
+  const description = config?.metaDescription || 'Ingeniería y soluciones industriales de alto nivel.';
+
   return {
+    metadataBase: new URL('https://www.serviciosjess.cl'),
     title: {
       template: `%s | ${config?.name || 'Servicios Jess'}`,
-      default: config?.metaTitle || config?.name || 'Servicios Jess',
+      default: title,
     },
-    description: config?.metaDescription || 'Ingeniería y soluciones industriales de alto nivel.',
+    description: description,
+    openGraph: {
+      title,
+      description,
+      url: 'https://www.serviciosjess.cl',
+      siteName: config?.name || 'Servicios Jess',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
     icons: {
       icon: config?.faviconUrl || '/favicon.ico',
       shortcut: config?.faviconUrl || '/favicon.ico',

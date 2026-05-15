@@ -17,8 +17,8 @@ export const getSiteConfig = unstable_cache(
     const fallbackConfig = {
       ...config,
       name: config?.name || 'Servicios Jess',
-      metaTitle: config?.metaTitle || 'Servicios Jess',
-      metaDescription: config?.metaDescription || 'Maestranza Avanzada y Soluciones B2B.',
+      metaTitle: config?.metaTitle || 'Servicios Jess | Gomas industriales, plásticos de ingeniería y maestranza',
+      metaDescription: config?.metaDescription || 'Expertos en gomas industriales, plásticos de ingeniería y maestranza. Fabricamos soluciones técnicas a medida para empresas e industrias.',
       contactEmail: config?.contactEmail || 'contacto@serviciosjess.cl',
       contactPhone: config?.contactPhone || '+56 9 1234 5678',
       devSignature: config?.devSignature || 'Diseñado y Desarrollado por DuetSolutions',
