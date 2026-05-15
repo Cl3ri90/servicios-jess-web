@@ -8,8 +8,8 @@ import { z } from 'zod';
 const ServiceSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().min(3, 'Título muy corto').max(100),
-  description: z.string().min(10, 'Descripción obligatoria'),
-  shortDescription: z.string().max(120, 'Máximo 120 caracteres'),
+  description: z.string(),
+  shortDescription: z.string().max(180, 'Máximo 180 caracteres'),
   imageUrl: z.string().url().optional().or(z.literal('')),
   iconName: z.string().optional().or(z.literal('')),
   order: z.coerce.number().int().default(0),
@@ -24,11 +24,20 @@ export async function upsertServiceCapability(prevState: any, formData: FormData
   const canEdit = await checkOwnerEditableFlag('capacidades');
   if (!canEdit) return { success: false, error: 'Acción bloqueada. Modulo solo lectura.' };
 
+  const rawDescription = formData.get('description') as string;
+  const rawShortDescription = formData.get('shortDescription') as string;
+  
+  // Sanitización y lógica de fallback para descripción detallada
+  const cleanDescription = sanitizeRichText(rawDescription || "");
+  const finalDescription = cleanDescription.trim().length > 0 
+    ? cleanDescription 
+    : rawShortDescription;
+
   const rawData = {
     id: formData.get('id') || undefined,
     title: formData.get('title'),
-    description: sanitizeRichText(formData.get('description') as string),
-    shortDescription: formData.get('shortDescription'),
+    description: finalDescription,
+    shortDescription: rawShortDescription,
     imageUrl: formData.get('imageUrl') || '',
     iconName: formData.get('iconName') || '',
     order: formData.get('order') || 0,
@@ -36,7 +45,18 @@ export async function upsertServiceCapability(prevState: any, formData: FormData
   };
 
   const valid = ServiceSchema.safeParse(rawData);
-  if (!valid.success) return { success: false, error: 'Validación de datos fallida' };
+  
+  if (!valid.success) {
+    const errorMsg = valid.error.issues
+      .map(issue => `${issue.path.join('.')}: ${issue.message}`)
+      .join(', ');
+    
+    console.warn("[ServiceCapability] Validation error:", valid.error.issues);
+    return { 
+      success: false, 
+      error: `Error de validación: ${errorMsg}` 
+    };
+  }
 
   try {
     if (valid.data.id) {
@@ -57,8 +77,8 @@ export async function upsertServiceCapability(prevState: any, formData: FormData
 
     return { success: true, message: 'Servicio guardado exitosamente.' };
   } catch (error) {
-    console.error(error);
-    return { success: false, error: 'Error interno guardando registro.' };
+    console.error("[ServiceCapability] Critical Save Error:", error);
+    return { success: false, error: 'Error interno guardando registro. Verifica los logs de producción.' };
   }
 }
 

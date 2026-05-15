@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { IconPicker } from './icon-picker';
 import { useFormStatus } from 'react-dom';
+import { useRouter } from 'next/navigation';
 
 interface CapabilityFormProps {
   initialData?: {
@@ -35,6 +36,7 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
   const [icon, setIcon] = useState(initialData?.iconName || '');
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
   
   
   const [formState, setFormState] = useState({
@@ -43,6 +45,9 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
     description: initialData?.description || '',
     imageUrl: initialData?.imageUrl || '',
   });
+
+  // URL para preview local (blobs) sin afectar lo que se guarda
+  const [previewUrl, setPreviewUrl] = useState(initialData?.imageUrl || '');
 
   const [isDirty, setIsDirty] = useState(false);
 
@@ -67,13 +72,20 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
        setIsUploading(true);
        const upRes = await uploadImage(formData);
        setIsUploading(false);
+       
        if (upRes.error) {
-         return { success: false, error: upRes.error };
+         return { success: false, error: `Error subiendo imagen: ${upRes.error}` };
        }
+       
        if (upRes.url) {
-         formData.set('imageUrl', upRes.url); // insertamos el URL resultante
+         formData.set('imageUrl', upRes.url);
          setFormState(prev => ({ ...prev, imageUrl: upRes.url as string }));
+         setPreviewUrl(upRes.url);
        }
+     } else {
+       // Si no hay archivo nuevo, mantenemos la URL que ya estaba en el hidden input
+       // o la que viene del estado persistido
+       formData.set('imageUrl', formState.imageUrl);
      }
      
      // Borramos file para no enviarlo sucio a la base de validación
@@ -89,10 +101,24 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
     if (state.message) {
       toast.success(state.message, { className: 'font-mono text-xs' });
       setIsDirty(false);
+      router.refresh();
+      
+      if (!initialData?.id) {
+        // Limpiar form si era creación nueva
+        setFormState({
+          title: '',
+          shortDescription: '',
+          description: '',
+          imageUrl: '',
+        });
+        setPreviewUrl('');
+        setIcon('');
+      }
+      
       if (onSuccess) onSuccess();
     }
     if (state.error) toast.error(state.error, { className: 'font-mono text-xs' });
-  }, [state, onSuccess]);
+  }, [state, onSuccess, initialData?.id, router]);
 
   const handleDelete = async () => {
     if (!initialData?.id) return;
@@ -154,11 +180,18 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
         </div>
 
         <div className="grid gap-2">
-          <Label className="text-zinc-400">Descripción Corta</Label>
+          <div className="flex justify-between items-center">
+            <Label className="text-zinc-400">Descripción Corta</Label>
+            <span className={`text-[10px] font-mono ${formState.shortDescription.length > 180 ? 'text-red-500' : 'text-zinc-500'}`}>
+              {formState.shortDescription.length} / 180
+            </span>
+          </div>
           <Input 
             name="shortDescription" 
             value={formState.shortDescription}
             onChange={handleChange}
+            maxLength={180}
+            placeholder="Recomendado: hasta 180 caracteres."
             required 
             className="border-zinc-800 bg-zinc-950 focus:border-orange-500 text-white"
           />
@@ -194,7 +227,8 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
                onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    setFormState(prev => ({ ...prev, imageUrl: URL.createObjectURL(file) }));
+                    setPreviewUrl(URL.createObjectURL(file));
+                    setIsDirty(true);
                   }
                }}
                className="border-zinc-800 bg-zinc-950 text-white text-xs cursor-pointer file:cursor-pointer file:bg-zinc-800 file:text-zinc-300 file:border-0 file:me-4 file:h-full file:px-3 hover:file:bg-zinc-700" 
@@ -224,6 +258,20 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
             </div>
           </div>
         </div>
+        
+        {/* Mensajes de Feedback Inline */}
+        <div className="space-y-3 pt-2">
+          {state?.error && (
+            <div className="rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300 font-mono animate-in fade-in slide-in-from-top-1">
+              <span className="font-bold mr-2">[ERROR]</span> {state.error}
+            </div>
+          )}
+          {state?.message && (
+            <div className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300 font-mono animate-in fade-in slide-in-from-top-1">
+              <span className="font-bold mr-2">[OK]</span> {state.message}
+            </div>
+          )}
+        </div>
 
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 w-full border-t border-zinc-800 mt-4">
           <DirtySaveBtn isDirty={isDirty} form="capability-form" className="w-full sm:w-auto" label="Guardar Capacidad" />
@@ -252,7 +300,7 @@ export function ServiceCapabilityForm({ initialData, onSuccess }: CapabilityForm
                  id="preview"
                  title={formState.title || 'Título Capacidad'}
                  description={formState.shortDescription || 'Breve descripción de la capacidad...'}
-                 imageUrl={formState.imageUrl}
+                 imageUrl={previewUrl}
                  iconName={icon}
                  href="#"
                />

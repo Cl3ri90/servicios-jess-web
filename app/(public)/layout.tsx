@@ -16,19 +16,19 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export async function generateMetadata() {
   const { config, seo } = await getSiteConfig();
-  
+
   // Lógica de Prioridad para Título
-  const title = 
-    seo?.pages?.inicio?.title || 
-    config?.metaTitle || 
-    seo?.global?.siteTitle || 
+  const title =
+    seo?.pages?.inicio?.title ||
+    config?.metaTitle ||
+    seo?.global?.siteTitle ||
     'Servicios Jess | Gomas industriales, plásticos de ingeniería y maestranza';
 
   // Lógica de Prioridad para Descripción
-  const description = 
-    seo?.pages?.inicio?.description || 
-    config?.metaDescription || 
-    seo?.global?.description || 
+  const description =
+    seo?.pages?.inicio?.description ||
+    config?.metaDescription ||
+    seo?.global?.description ||
     'Expertos en gomas industriales, plásticos de ingeniería y maestranza. Fabricamos soluciones técnicas a medida para empresas e industrias.';
 
   // Título compacto para Redes Sociales (OG / Twitter)
@@ -65,11 +65,11 @@ export async function generateMetadata() {
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const { config, seo, activeFlags } = await getSiteConfig();
-  
-  const description = 
-    seo?.pages?.inicio?.description || 
-    config?.metaDescription || 
-    seo?.global?.description || 
+
+  const description =
+    seo?.pages?.inicio?.description ||
+    config?.metaDescription ||
+    seo?.global?.description ||
     'Expertos en gomas industriales, plásticos de ingeniería y maestranza. Fabricamos soluciones técnicas a medida para empresas e industrias.';
 
   const mainCtaConfig = await getMainCtaConfig();
@@ -110,10 +110,10 @@ export default async function PublicLayout({ children }: { children: React.React
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Navbar 
-        brandName={config?.name || 'SERVICIOS JESS'} 
+      <Navbar
+        brandName={config?.name || 'SERVICIOS JESS'}
         logoUrl={config?.logoUrl}
-        activeFlags={activeFlags} 
+        activeFlags={activeFlags}
       />
       <Suspense fallback={null}>
         <AnalyticsTracker />
@@ -124,7 +124,7 @@ export default async function PublicLayout({ children }: { children: React.React
       <MainCtaWrapper config={mainCtaConfig} activeFlags={activeFlags} disableOnHome={true} />
       <FloatingCTAWrapper />
       <BackToTopButton />
-      <Footer 
+      <Footer
         brandName={config?.name || 'SERVICIOS JESS'}
         email={config?.contactEmail || null}
         phone={config?.contactPhone || null}
@@ -135,7 +135,7 @@ export default async function PublicLayout({ children }: { children: React.React
         devSignatureUrl={config?.devSignatureUrl}
       />
       {validPopup && (
-        <CommercialPopupClient 
+        <CommercialPopupClient
           title={popup.title}
           text={popup.text}
           buttonText={popup.buttonText}
