@@ -19,14 +19,13 @@ export default async function PortafolioPage() {
   });
 
   return (
-    <div className="bg-neutral-950 py-16 text-neutral-100 flex-1">
-      <div className="bg-neutral-900 border-b border-neutral-800 py-24 mb-16 relative mt-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-tr from-neutral-950 via-neutral-900/80 to-neutral-800/20" />
+    <div className="bg-[var(--site-background)] py-16 text-[var(--site-text)] flex-1">
+      <div className="bg-[var(--site-surface-secondary)] border-b border-[var(--site-border)] py-24 mb-16 relative mt-20 overflow-hidden">
         <div className="max-w-[1320px] mx-auto px-6 relative z-10">
-          <h1 className="text-4xl md:text-5xl font-black mb-4 text-white uppercase tracking-tight">
-            <span className="text-[#ea580c]">Portafolio</span> Técnico
+          <h1 className="text-4xl md:text-5xl font-black mb-4 text-[var(--site-text)] uppercase tracking-tight">
+            <span className="text-[var(--site-primary)]">Portafolio</span> Técnico
           </h1>
-          <p className="text-xl font-light text-neutral-400 max-w-3xl">Casos de éxito y proyectos entregados bajo rigor normativo.</p>
+          <p className="text-xl font-normal text-[var(--site-text-muted)] max-w-3xl">Casos de éxito y proyectos entregados bajo rigor normativo.</p>
         </div>
       </div>
       

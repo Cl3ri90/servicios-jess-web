@@ -18,14 +18,13 @@ export default async function ServiciosPage() {
   const servicios = await getActiveServices() as any[];
 
   return (
-    <div className="bg-neutral-950 py-16 text-neutral-100 selection:bg-[var(--color-primary)]/30 flex-1">
-      <div className="bg-neutral-900 border-b border-neutral-800 py-24 mb-16 relative mt-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-tr from-neutral-950 via-neutral-900/80 to-neutral-800/20" />
+    <div className="bg-[var(--site-background)] py-16 text-[var(--site-text)] flex-1">
+      <div className="bg-[var(--site-surface-secondary)] border-b border-[var(--site-border)] py-24 mb-16 relative mt-20 overflow-hidden">
         <div className="max-w-[1320px] mx-auto px-6 relative z-10">
-          <h1 className="text-4xl md:text-5xl font-black mb-4 text-white uppercase tracking-tight">
-            <span className="text-[#ea580c]">Servicios</span> Industriales
+          <h1 className="text-4xl md:text-5xl font-black mb-4 text-[var(--site-text)] uppercase tracking-tight">
+            <span className="text-[var(--site-primary)]">Servicios</span> Industriales
           </h1>
-          <p className="text-xl font-light text-neutral-400 max-w-3xl">
+          <p className="text-xl font-normal text-[var(--site-text-muted)] max-w-3xl">
             {config?.heroSubtitle || 'Desarrollo y mantenimiento metalmecánico para minería, forestal y agroindustria.'}
           </p>
         </div>
@@ -34,40 +33,40 @@ export default async function ServiciosPage() {
       <div className="max-w-[1320px] mx-auto px-6 pb-24">
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {servicios.map((srv) => (
-              <div key={srv.id} className="group bg-neutral-900 border border-neutral-800 rounded-sm overflow-hidden flex flex-col hover:border-[var(--color-primary)]/50 transition-colors glass">
-                <div className="aspect-video relative bg-neutral-950 overflow-hidden mix-blend-luminosity hover:mix-blend-normal transition-all duration-500">
+              <div key={srv.id} className="group bg-[var(--site-surface)] border border-[var(--site-border)] rounded-2xl overflow-hidden flex flex-col hover:border-[var(--site-primary)] hover:shadow-md transition-all">
+                <div className="aspect-video relative bg-[var(--site-surface-secondary)] overflow-hidden">
                   {srv.imageUrl ? (
-                    <img src={srv.imageUrl} alt={srv.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter grayscale contrast-125 brightness-75 group-hover:brightness-100 group-hover:grayscale-0" />
+                    <img src={srv.imageUrl} alt={srv.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center opacity-30">
                        <span className="w-16 h-1 bg-neutral-800 block mb-4 relative overflow-hidden">
-                         <span className="absolute left-0 top-0 h-full w-1/3 bg-[var(--color-primary)]"></span>
+                         <span className="absolute left-0 top-0 h-full w-1/3 bg-[var(--site-primary)]"></span>
                        </span>
-                       <p className="text-neutral-500 font-mono text-sm">[ IMAGEN PENDIENTE ]</p>
+                       <p className="text-[var(--site-text-muted)] font-mono text-sm">[ IMAGEN PENDIENTE ]</p>
                     </div>
                   )}
                   {srv.iconName && (
-                    <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm border border-neutral-700 text-[var(--color-primary)] p-2 rounded-sm w-10 h-10 flex flex-col justify-center items-center">
+                    <div className="absolute top-4 left-4 bg-[var(--site-surface)]/90 backdrop-blur-sm border border-[var(--site-border)] text-[var(--site-primary)] p-2 rounded-lg w-10 h-10 flex flex-col justify-center items-center shadow-sm">
                        <DynamicIcon 
                         icon={srv.iconName} 
-                        className="w-6 h-6" 
+                        className="w-5 h-5"
                         colorMode={srv.iconName.includes(':') && !srv.iconName.startsWith('lucide:') && !srv.iconName.startsWith('mdi:') ? 'native' : 'mono'}
                        />
                     </div>
                   )}
                 </div>
-                <div className="p-8 flex flex-col flex-1 text-left">
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[var(--color-primary)] transition-colors">
+                <div className="p-6 flex flex-col flex-1 text-left">
+                  <h3 className="text-xl font-bold text-[var(--site-text)] mb-3 group-hover:text-[var(--site-primary)] transition-colors">
                     {srv.title}
                   </h3>
-                  <p className="text-neutral-400 text-sm font-light leading-relaxed mb-6">
+                  <p className="text-[var(--site-text-muted)] text-sm font-normal leading-relaxed mb-6 flex-1">
                     {srv.shortDescription || 'Requerimiento técnico personalizado.'}
                   </p>
                 </div>
               </div>
             ))}
             {servicios.length === 0 && (
-              <div className="col-span-12 text-center py-24 text-neutral-500 font-light border border-dashed border-neutral-800 rounded-sm">
+              <div className="col-span-12 text-center py-24 text-[var(--site-text-muted)] font-light border border-dashed border-[var(--site-border)] rounded-lg">
                  No hay servicios activos en este momento.
               </div>
             )}

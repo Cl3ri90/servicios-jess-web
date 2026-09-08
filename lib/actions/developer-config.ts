@@ -2,7 +2,7 @@
 
 import { checkDeveloper } from '@/lib/admin/permissions';
 import { prisma } from '@/lib/prisma';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
 
 const DeveloperConfigSchema = z.object({
@@ -33,6 +33,7 @@ export async function updateDeveloperConfig(prevState: any, formData: FormData) 
     revalidatePath('/admin/developer/configuracion');
     revalidatePath('/');
     revalidatePath('/login');
+    revalidateTag('site-config', 'max');
     return { success: true, message: 'Configuración maestra actualizada' };
   } catch (err) {
     return { success: false, error: 'Error escribiendo en BD' };

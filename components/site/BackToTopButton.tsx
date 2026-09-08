@@ -56,7 +56,7 @@ export function BackToTopButton() {
       title="Volver arriba"
       aria-hidden={!isVisible}
       tabIndex={isVisible ? 0 : -1}
-      className={`fixed bottom-24 right-6 z-40 p-3 rounded-xl bg-[#ea580c] text-white shadow-lg transition-all duration-300 transform border border-white/10 hover:bg-orange-500 hover:scale-110 active:scale-95 ${
+      className={`fixed bottom-24 right-6 z-40 p-3 rounded-xl bg-[var(--site-primary)] text-white shadow-lg transition-all duration-300 transform border border-white/10 hover:opacity-90 hover:scale-110 active:scale-95 ${
         isVisible 
           ? 'opacity-100 translate-y-0 pointer-events-auto' 
           : 'opacity-0 translate-y-8 pointer-events-none'

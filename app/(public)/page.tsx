@@ -19,10 +19,14 @@ export default async function PublicHomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroSection 
-        title={config?.heroTitle || 'Excelencia Metalmecánica y Estructural'} 
-        content={config?.heroSubtitle || 'Soluciones industriales de alta precisión.'}
+        title={config?.heroTitle || 'Gomas Industriales & Plásticos'}
+        content={config?.heroSubtitle || 'Fábrica de gomas industriales, plásticos de ingeniería y maestranza.'}
         imageUrl={config?.heroBgUrl} 
         overline="Servicios Especializados"
+        btnText={config?.heroBtnText || 'Cotizar proyecto'}
+        btnLink={config?.heroBtnLink || '/contacto'}
+        secBtnText={config?.heroSecBtnText || 'Ver capacidades'}
+        secBtnLink={config?.heroSecBtnLink || '/servicios'}
       />
       
       {activeModules.map(module => {

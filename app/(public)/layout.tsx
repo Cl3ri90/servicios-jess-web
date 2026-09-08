@@ -104,8 +104,34 @@ export default async function PublicLayout({ children }: { children: React.React
     }
   };
 
+  const isValidHex = (hex?: string | null): hex is string => {
+    if (!hex) return false;
+    return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(hex.trim());
+  };
+
+  const primaryColor = isValidHex(config?.primaryColor) ? config.primaryColor.trim() : '#EA580C';
+  const customBg = isValidHex(config?.secondaryColor) ? config.secondaryColor.trim() : undefined;
+
+  const dynamicStyles: Record<string, string> = {
+    '--site-primary': primaryColor,
+    '--site-primary-hover': primaryColor,
+    '--site-accent-soft': `${primaryColor}1A`,
+  };
+
+  if (customBg) {
+    dynamicStyles['--site-custom-bg'] = customBg;
+  }
+
+  const antiFoucScript = `(function(){try{var t=localStorage.getItem('servicios-jess-theme');if(t==='dark'||t==='light'){var el=document.querySelector('.public-site');if(el){el.setAttribute('data-theme',t);}}}catch(e){}})();`;
+
   return (
-    <>
+    <div
+      className="public-site"
+      data-theme="light"
+      suppressHydrationWarning
+      style={dynamicStyles as React.CSSProperties}
+    >
+      <script dangerouslySetInnerHTML={{ __html: antiFoucScript }} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -144,7 +170,7 @@ export default async function PublicLayout({ children }: { children: React.React
           isActive={true}
         />
       )}
-    </>
+    </div>
   );
 }
 

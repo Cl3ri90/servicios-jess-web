@@ -2,56 +2,83 @@ import Link from 'next/link';
 import { DynamicIcon } from '@/components/shared/dynamic-icon';
 
 type IndustrialCardProps = {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   code?: string;
   href?: string;
   imageUrl?: string | null;
   iconName?: string | null;
+  colorOnHover?: boolean;
 };
 
-export function IndustrialCard({ title, description, code, href, imageUrl, iconName }: IndustrialCardProps) {
-  return (
-    <div className="group flex flex-col h-full overflow-hidden rounded-sm border border-zinc-800/50 glass hover:border-[var(--color-accent)] hover:shadow-[0_0_40px_rgba(234,88,12,0.12)] transition-all">
+export function IndustrialCard({
+  title,
+  description,
+  code,
+  href,
+  imageUrl,
+  iconName,
+  colorOnHover = false
+}: IndustrialCardProps) {
+  const cardContent = (
+    <div className="group flex flex-col h-full overflow-hidden rounded-2xl border border-[var(--site-border)] bg-[var(--site-surface)] p-3.5 shadow-sm hover:shadow-md hover:border-[var(--site-primary)] transition-all duration-300 cursor-pointer">
       
-      {/* Upper Block: Image Placeholder or Image */}
-      <div className="relative h-[220px] w-full bg-[var(--background)] overflow-hidden border-b border-white/5 group-hover:border-[var(--color-accent)]/30 transition-colors">
+      {/* Upper Block: Image container */}
+      <div className="relative h-[200px] w-full rounded-xl overflow-hidden bg-[var(--site-surface-secondary)]">
         {imageUrl ? (
           <img 
             src={imageUrl} 
             alt={title}
-            className="w-full h-full object-cover filter grayscale contrast-125 brightness-75 group-hover:brightness-100 group-hover:scale-105 transition-all duration-700" 
+            className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${colorOnHover ? '' : ''}`}
           />
         ) : (
-          <div className="absolute inset-0 bg-[var(--background)] bg-[radial-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] [background-size:16px_16px] opacity-40 group-hover:opacity-80 transition-opacity" />
+          <div className="absolute inset-0 bg-[var(--site-surface-secondary)] flex items-center justify-center">
+            <span className="text-xs font-mono text-[var(--site-text-muted)] uppercase tracking-widest">{code || 'SERVICIOS JESS'}</span>
+          </div>
         )}
 
+        {/* Icon Badge Top-Left */}
         {iconName ? (
-          <div className="absolute top-4 left-4 bg-[var(--background)]/80 backdrop-blur-sm border border-zinc-800 p-2 rounded-sm group-hover:border-[var(--color-accent)] transition-colors">
+          <div className="absolute top-3 left-3 bg-[var(--site-surface)]/90 backdrop-blur-md border border-[var(--site-border)] w-9 h-9 rounded-lg flex items-center justify-center shadow-sm group-hover:border-[var(--site-primary)] transition-colors">
             <DynamicIcon 
               icon={iconName} 
-              className="w-5 h-5 text-[var(--color-accent)]" 
+              className="w-4 h-4 text-[var(--site-primary)]"
               colorMode={iconName.includes(':') && !iconName.startsWith('lucide:') && !iconName.startsWith('mdi:') ? 'native' : 'mono'}
             />
           </div>
         ) : code ? (
-          <div className="absolute top-4 left-4 bg-[var(--background)] border border-zinc-800 px-2 py-1">
-            <span className="text-[11px] font-mono text-[var(--color-accent)] font-black tracking-widest">{code}</span>
+          <div className="absolute top-3 left-3 bg-[var(--site-surface)]/90 backdrop-blur-md border border-[var(--site-border)] px-2 py-1 rounded-md shadow-sm">
+            <span className="text-[10px] font-mono text-[var(--site-primary)] font-black tracking-widest">{code}</span>
           </div>
         ) : null}
       </div>
 
-      {/* Lower Block */}
-      <div className="flex flex-col flex-1 p-8 bg-[var(--background)]/40">
-        <h3 className="text-xl font-bold text-[var(--foreground)] mb-4 tracking-tight group-hover:text-white transition-colors">
-          {title}
-        </h3>
+      {/* Lower Block: Content */}
+      <div className="flex flex-col flex-1 pt-4 px-2 pb-1">
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <h3 className="text-lg font-bold text-[var(--site-text)] tracking-tight group-hover:text-[var(--site-primary)] transition-colors">
+            {title}
+          </h3>
+          <span className="text-[var(--site-text)] group-hover:text-[var(--site-primary)] group-hover:translate-x-1 transition-all text-base font-bold leading-none select-none">
+            →
+          </span>
+        </div>
         
-        <p className="text-zinc-400 text-sm leading-relaxed mb-4 flex-1">
+        <p className="text-[var(--site-text-muted)] text-xs sm:text-sm leading-relaxed flex-1 line-clamp-3">
           {description}
         </p>
       </div>
     </div>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className="block h-full">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 }

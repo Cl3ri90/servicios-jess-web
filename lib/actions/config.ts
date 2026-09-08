@@ -179,6 +179,7 @@ export async function updateGlobalSettings(formData: FormData) {
     revalidatePath('/servicios');
     revalidatePath('/portafolio');
     revalidatePath('/contacto');
+    revalidateTag('site-config', 'max');
 
     return { success: 'Configuración guardada y assets actualizados.' };
 

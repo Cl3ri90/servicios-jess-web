@@ -1,3 +1,5 @@
+'use client';
+
 import { DynamicIcon } from '@/components/shared/dynamic-icon';
 import { trackEvent } from '@/lib/analytics/track-event';
 import Link from 'next/link';

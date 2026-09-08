@@ -70,33 +70,33 @@ export function ContactForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-xs font-bold text-white uppercase tracking-widest block mb-1">Nombre Completo <span className="text-[var(--color-primary)]">*</span></label>
-          <input required name="name" type="text" disabled={isPending} className="w-full bg-neutral-950 border border-neutral-800 p-4 font-medium text-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all disabled:opacity-50" />
+          <label className="text-xs font-bold text-[var(--site-text)] uppercase tracking-widest block mb-1">Nombre Completo <span className="text-[var(--site-primary)]">*</span></label>
+          <input required name="name" type="text" disabled={isPending} className="w-full bg-[var(--site-surface-secondary)] border border-[var(--site-border)] p-4 font-medium text-[var(--site-text)] rounded-xl focus:border-[var(--site-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--site-primary)] transition-all disabled:opacity-50" />
         </div>
         <div className="space-y-2">
-          <label className="text-xs font-bold text-white uppercase tracking-widest block mb-1">Empresa</label>
-          <input name="company" type="text" disabled={isPending} className="w-full bg-neutral-950 border border-neutral-800 p-4 font-medium text-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all disabled:opacity-50" />
+          <label className="text-xs font-bold text-[var(--site-text)] uppercase tracking-widest block mb-1">Empresa</label>
+          <input name="company" type="text" disabled={isPending} className="w-full bg-[var(--site-surface-secondary)] border border-[var(--site-border)] p-4 font-medium text-[var(--site-text)] rounded-xl focus:border-[var(--site-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--site-primary)] transition-all disabled:opacity-50" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-xs font-bold text-white uppercase tracking-widest block mb-1">Correo Corporativo <span className="text-[var(--color-primary)]">*</span></label>
-          <input required name="email" type="email" disabled={isPending} className="w-full bg-neutral-950 border border-neutral-800 p-4 font-medium text-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all disabled:opacity-50" />
+          <label className="text-xs font-bold text-[var(--site-text)] uppercase tracking-widest block mb-1">Correo Corporativo <span className="text-[var(--site-primary)]">*</span></label>
+          <input required name="email" type="email" disabled={isPending} className="w-full bg-[var(--site-surface-secondary)] border border-[var(--site-border)] p-4 font-medium text-[var(--site-text)] rounded-xl focus:border-[var(--site-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--site-primary)] transition-all disabled:opacity-50" />
         </div>
         <div className="space-y-2">
-          <label className="text-xs font-bold text-white uppercase tracking-widest block mb-1">Teléfono Directo</label>
-          <input name="phone" type="text" disabled={isPending} className="w-full bg-neutral-950 border border-neutral-800 p-4 font-medium text-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all disabled:opacity-50" />
+          <label className="text-xs font-bold text-[var(--site-text)] uppercase tracking-widest block mb-1">Teléfono Directo</label>
+          <input name="phone" type="text" disabled={isPending} className="w-full bg-[var(--site-surface-secondary)] border border-[var(--site-border)] p-4 font-medium text-[var(--site-text)] rounded-xl focus:border-[var(--site-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--site-primary)] transition-all disabled:opacity-50" />
         </div>
       </div>
 
       <div className="space-y-2">
-        <label className="text-xs font-bold text-white uppercase tracking-widest block mb-1">Detalle Técnico o Requerimiento <span className="text-[var(--color-primary)]">*</span></label>
-        <textarea required name="message" rows={5} disabled={isPending} className="w-full bg-neutral-950 border border-neutral-800 p-4 font-medium text-white focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] transition-all resize-none disabled:opacity-50"></textarea>
+        <label className="text-xs font-bold text-[var(--site-text)] uppercase tracking-widest block mb-1">Detalle Técnico o Requerimiento <span className="text-[var(--site-primary)]">*</span></label>
+        <textarea required name="message" rows={5} disabled={isPending} className="w-full bg-[var(--site-surface-secondary)] border border-[var(--site-border)] p-4 font-medium text-[var(--site-text)] rounded-xl focus:border-[var(--site-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--site-primary)] transition-all resize-none disabled:opacity-50"></textarea>
       </div>
 
       <div className="pt-6">
-        <button type="submit" disabled={isPending} className="w-full py-5 bg-[var(--color-accent)] text-white font-black text-sm tracking-widest uppercase hover:bg-[var(--color-accent-hover)] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button type="submit" disabled={isPending} className="w-full py-5 bg-[var(--site-primary)] text-white font-black text-sm tracking-widest uppercase hover:opacity-90 rounded-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
           {isPending ? 'PROCESANDO SOLICITUD...' : 'ENVIAR SOLICITUD TÉCNICA'}
         </button>
       </div>

@@ -5,9 +5,9 @@ export function TrustSection({ clients }: { clients: any[] }) {
   const duplicatedClients = [...clients, ...clients, ...clients, ...clients, ...clients, ...clients];
 
   return (
-    <section className="w-full bg-[#050505] py-20 border-y border-white/5 overflow-hidden relative">
+    <section className="w-full bg-[var(--site-surface-secondary)] py-16 border-y border-[var(--site-border)] overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-6 text-center mb-10">
-        <p className="text-zinc-500 font-bold text-xs tracking-[0.2em] uppercase">
+        <p className="text-[var(--site-text-muted)] font-bold text-xs tracking-[0.2em] uppercase">
           Empresas que confían en nuestra ingeniería
         </p>
       </div>
@@ -20,12 +20,12 @@ export function TrustSection({ clients }: { clients: any[] }) {
           {duplicatedClients.map((client, index) => (
             <div 
               key={`${client.id}-${index}`} 
-              className="flex items-center justify-center min-w-[160px] h-14 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default"
+              className="flex items-center justify-center min-w-[160px] h-14 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default"
             >
               {client.logoUrl ? (
                 <img src={client.logoUrl} alt={client.name} className="max-h-full max-w-full object-contain" />
               ) : (
-                <span className="font-black text-xl tracking-tighter text-zinc-300 whitespace-nowrap">
+                <span className="font-black text-xl tracking-tighter text-[var(--site-text)] whitespace-nowrap">
                   {client.name}
                 </span>
               )}

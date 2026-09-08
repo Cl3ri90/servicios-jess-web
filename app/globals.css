@@ -130,3 +130,52 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
+
+/* ==========================================================================
+   PUBLIC SITE INDUSTRIAL DESIGN SYSTEM (Theme Encapsulation)
+   ========================================================================== */
+
+.public-site {
+  /* Default: Industrial Light Theme */
+  --site-primary: #EA580C;
+  --site-primary-hover: #C2410C;
+  --site-primary-foreground: #FFFFFF;
+  --site-background: #FAFAF8;
+  --site-header: #FFFFFF;
+  --site-surface: #FFFFFF;
+  --site-surface-secondary: #F3F4F6;
+  --site-surface-elevated: #FFFFFF;
+  --site-text: #111827;
+  --site-text-muted: #64748B;
+  --site-border: #DCE2E8;
+  --site-border-subtle: #E5E7EB;
+  --site-accent-soft: #FFF1E8;
+
+  background-color: var(--site-background);
+  color: var(--site-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.public-site[data-theme="dark"] {
+  /* Industrial Dark Theme */
+  --site-background: #0D1117;
+  --site-header: #11161D;
+  --site-surface: #161C24;
+  --site-surface-secondary: #1C232D;
+  --site-surface-elevated: #171D25;
+  --site-text: #F7F5F0;
+  --site-text-muted: #AAB3C0;
+  --site-border: #2B3440;
+  --site-border-subtle: #232B36;
+  --site-accent-soft: rgba(234, 88, 12, 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-site,
+  .public-site * {
+    transition: none !important;
+  }
+}
